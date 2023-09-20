@@ -1,117 +1,79 @@
-from SphericalMatch.QuadTree import DataQuadTree
+
+import unittest
 import random
+from SphericalMatch.QuadTree import DataQuadTree
+
+class TestDataQuadTreeInsertion(unittest.TestCase):
+
+    def setUp(self):
+        self.tree = DataQuadTree()
+
+    def test_insert_single_data(self):
+        self.assertFalse(self.tree.insert(1, 2, "data1"))
+        self.assertEqual(self.tree.query(1, 2), ["data1"])
+
+    def test_insert_multiple_data_same_point(self):
+        self.assertFalse(self.tree.insert(1, 2, "data1"))
+        self.tree.insert(1, 2, "data2")
+        self.assertEqual(self.tree.query(1, 2), ["data1", "data2"])
+
+    def test_insert_multiple_data_different_points(self):
+        self.tree.insert(1, 2, "data1")
+        self.tree.insert(3, 4, "data2")
+        self.assertEqual(self.tree.query(1, 2), ["data1"])
+        self.assertEqual(self.tree.query(3, 4), ["data2"])
+
+    def test_large_coordinates_insert(self):
+        self.assertFalse(self.tree.insert(int(1e6), int(1e6), "data_large"))
+        self.assertEqual(self.tree.query(int(1e6), int(1e6)), ["data_large"])
+        self.assertFalse(self.tree.insert(int(-1e6), int(-1e6), "data_small"))
+        self.assertEqual(self.tree.query(int(-1e6), int(-1e6)), ["data_small"])
+
+    def test_insert_same_point_many_times(self):
+        data_list = ["data" + str(i) for i in range(1000)]
+        for data in data_list:
+            self.tree.insert(0, 0, data)
+        self.assertEqual(self.tree.query(0, 0), data_list)
+
+    def test_insert_unique_coordinates_large_number(self):
+        coordinates_data = [(i, i, "data" + str(i)) for i in range(1000)]
+        random.shuffle(coordinates_data)
+        for x, y, data in coordinates_data:
+            self.tree.insert(x, y, data)
+        for i in range(1000):
+            self.assertEqual(self.tree.query(i, i), ["data" + str(i)])
 
 
-def test_insert_single_data():
-    tree = DataQuadTree()
-    assert not tree.insert(1, 2, "data1")
-    assert tree.query(1, 2) == ["data1"]
-    print("test_insert_single_data passed!")
+class TestDataQuadTreeQuery(unittest.TestCase):
+
+    def setUp(self):
+        self.tree = DataQuadTree()
+
+    def test_query_nonexistent_point(self):
+        self.assertEqual(self.tree.query(1, 2), [])
+
+    def test_query_nonexistent_large_coordinates(self):
+        self.assertEqual(self.tree.query(int(1e6), int(1e6)), [])
+        self.assertEqual(self.tree.query(int(-1e6), int(-1e6)), [])
 
 
-def test_insert_multiple_data_same_point():
-    tree = DataQuadTree()
-    assert not tree.insert(1, 2, "data1")
-    tree.insert(1, 2, "data2")
-    assert tree.query(1, 2) == ["data1", "data2"]
-    print("test_insert_multiple_data_same_point passed!")
+class TestDataQuadTreeLength(unittest.TestCase):
+
+    def setUp(self):
+        self.tree = DataQuadTree()
+
+    def test_length_single_data(self):
+        self.tree.insert(1, 2, "data1")
+        self.assertEqual(self.tree.length(1, 2), 1)
+
+    def test_length_multiple_data(self):
+        self.tree.insert(1, 2, "data1")
+        self.tree.insert(1, 2, "data2")
+        self.assertEqual(self.tree.length(1, 2), 2)
+
+    def test_length_nonexistent_point(self):
+        self.assertEqual(self.tree.length(1, 2), 0)
 
 
-def test_insert_multiple_data_different_points():
-    tree = DataQuadTree()
-    tree.insert(1, 2, "data1")
-    tree.insert(3, 4, "data2")
-    assert tree.query(1, 2) == ["data1"]
-    assert tree.query(3, 4) == ["data2"]
-    print("test_insert_multiple_data_different_points passed!")
-
-
-def test_query_nonexistent_point():
-    tree = DataQuadTree()
-    assert tree.query(1, 2) == []
-    print("test_query_nonexistent_point passed!")
-
-
-def test_length_single_data():
-    tree = DataQuadTree()
-    tree.insert(1, 2, "data1")
-    assert tree.length(1, 2) == 1
-    print("test_length_single_data passed!")
-
-
-def test_length_multiple_data():
-    tree = DataQuadTree()
-    tree.insert(1, 2, "data1")
-    tree.insert(1, 2, "data2")
-    assert tree.length(1, 2) == 2
-    print("test_length_multiple_data passed!")
-
-
-def test_length_nonexistent_point():
-    tree = DataQuadTree()
-    assert tree.length(1, 2) == 0
-    print("test_length_nonexistent_point passed!")
-
-
-def test_large_coordinates_insert():
-    tree = DataQuadTree()
-    assert not tree.insert(int(1e6), int(1e6), "data_large")
-    assert tree.query(int(1e6), int(1e6)) == ["data_large"]
-    assert not tree.insert(int(-1e6), int(-1e6), "data_small")
-    assert tree.query(int(-1e6), int(-1e6)) == ["data_small"]
-    print("test_large_coordinates_insert passed!")
-
-
-def test_insert_same_point_many_times():
-    tree = DataQuadTree()
-    data_list = ["data" + str(i) for i in range(1000)]
-    for data in data_list:
-        tree.insert(0, 0, data)
-    assert tree.query(0, 0) == data_list
-    print("test_insert_same_point_many_times passed!")
-
-
-def test_insert_unique_coordinates_large_number():
-    tree = DataQuadTree()
-    coordinates_data = [(i, i, "data" + str(i)) for i in range(1000)]
-    # Shuffle the list to randomize the insertion order
-    random.shuffle(coordinates_data)
-    for x, y, data in coordinates_data:
-        tree.insert(x, y, data)
-    for i in range(1000):
-        assert tree.query(i, i) == ["data" + str(i)]
-    print("test_insert_unique_coordinates_large_number passed!")
-
-
-def test_query_nonexistent_large_coordinates():
-    tree = DataQuadTree()
-    assert tree.query(int(1e6), int(1e6)) == []
-    assert tree.query(int(-1e6), int(-1e6)) == []
-    print("test_query_nonexistent_large_coordinates passed!")
-
-
-def test_insert_with_non_integer_values():
-    tree = DataQuadTree()
-    try:
-        tree.insert(1.5, 1.5, "data_float")
-        assert False, "Expected an error when inserting non-integer coordinates."
-    except:
-        pass
-    print("test_insert_with_non_integer_values passed!")
-
-
-# Running the tests in the style of test_Toolbox_Spherical.py
 if __name__ == "__main__":
-    test_insert_single_data()
-    test_insert_multiple_data_same_point()
-    test_insert_multiple_data_different_points()
-    test_query_nonexistent_point()
-    test_length_single_data()
-    test_length_multiple_data()
-    test_length_nonexistent_point()
-    test_large_coordinates_insert()
-    test_insert_same_point_many_times()
-    test_insert_unique_coordinates_large_number()
-    test_query_nonexistent_large_coordinates()
-    test_insert_with_non_integer_values()
-    print("All tests passed.")
+    unittest.main()
