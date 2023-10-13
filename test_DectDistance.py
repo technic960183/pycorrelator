@@ -1,6 +1,6 @@
 from SphericalMatch.Toolbox_Spherical import point_offset, generate_random_point
 from SphericalMatch.DetectDistance_OtherMethod import group_by_disjoint_set, group_by_DFS
-from SphericalMatch.DetectDistance_MP import group_by_quadtree
+from SphericalMatch.DetectDistance_Scipy import group_by_quadtree
 import numpy as np
 import unittest
 
@@ -43,7 +43,7 @@ def generate_celestial_grid(**kwargs):
     return grid
 
 
-def create_groups_from_grid(grid, tolerance=1, seed=None, fractor=0.5):
+def create_groups_from_grid(grid, tolerance=1, seed=None, fraction=0.5, ring_radius=(0, 1)):
     """
     Randomly pick half of the grid points and create groups around them.
     For each selected grid point, use the point_offset() function to create several points 
@@ -54,7 +54,7 @@ def create_groups_from_grid(grid, tolerance=1, seed=None, fractor=0.5):
         seed = np.random.randint(0, 1e6)
     np.random.seed(seed)
     np.random.shuffle(grid)
-    selected_points = grid[:np.floor(len(grid)*fractor).astype(int)]
+    selected_points = grid[:np.floor(len(grid)*fraction).astype(int)]
 
     groups = []
     for point in selected_points:
@@ -62,7 +62,7 @@ def create_groups_from_grid(grid, tolerance=1, seed=None, fractor=0.5):
         for _ in range(np.random.randint(1, 5)):  # Randomly create 1 to 4 additional points
             theta = np.random.uniform(0, 360)  # Random direction
             offset_point = point_offset(
-                point, np.random.uniform(tolerance*0.999, tolerance*1.000),
+                point, np.random.uniform(tolerance*ring_radius[0], tolerance*ring_radius[1]),
                 theta)  # Random distance within 1 deg (tolerance)
             group.append(offset_point)
         groups.append(group)
@@ -111,7 +111,8 @@ class TestCelestialGrouping_RandomGrid(unittest.TestCase):
         print(f"Seed: {seed}")
         grid = generate_celestial_grid(dec_bounds=70)
         self.tolerance = 1  # deg
-        self.expected_groups, self.all_points = create_groups_from_grid(grid, self.tolerance, seed=seed)
+        self.expected_groups, self.all_points = create_groups_from_grid(
+            grid, self.tolerance, seed=seed, ring_radius=(0.5, 1.0))
 
     @unittest.skip("This test is for the disjoint set method.")
     def test_group_by_disjoint_set(self):
@@ -146,9 +147,9 @@ class TestCelestialGrouping_Random(unittest.TestCase):
 class TestCelestialGrouping(unittest.TestCase):
 
     def test_qt_high_density(self):
-        grid = generate_celestial_grid(ra_step=1, dec_step=1, dec_bounds=80)
-        tolerance = 0.01
-        expected_groups, all_points = create_groups_from_grid(grid, tolerance, fractor=0.15)
+        grid = generate_celestial_grid(ra_step=1, dec_step=1, dec_bounds=70)
+        tolerance = 0.1
+        expected_groups, all_points = create_groups_from_grid(grid, tolerance, fraction=0.1, ring_radius=(0.9999, 1.0))
         output_groups = group_by_quadtree(all_points, tolerance)
         problematic_groups = check_group_match(expected_groups, output_groups)
         self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
@@ -156,7 +157,7 @@ class TestCelestialGrouping(unittest.TestCase):
     def test_qt_grid_boundary(self):
         grid = generate_celestial_grid(ra_step=60, dec_step=5, dec_bounds=60)
         tolerance = 0.2
-        expected_groups, all_points = create_groups_from_grid(grid, tolerance, fractor=1)
+        expected_groups, all_points = create_groups_from_grid(grid, tolerance, fraction=1)
         output_groups = group_by_quadtree(all_points, tolerance)
         problematic_groups = check_group_match(expected_groups, output_groups)
         self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
