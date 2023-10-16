@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from SphericalMatch.Chunk import ChunkGeneratorByGrid
+from SphericalMatch.ChunkGenerator_Grid import ChunkGeneratorByGrid
 
 
 class TestChunkGeneratorByGrid_coor2id_central(unittest.TestCase):
@@ -46,7 +46,8 @@ class TestChunkGeneratorByGrid_coor2id_boundary(unittest.TestCase):
 
     def test_middle_chunks_boundaries(self):
         ra = np.array([0, 60, 120, 180, 240, 300]) + 0.01
-        dec = np.array([28, 28, 28, 28, 28, 28])  # Near the middle chunk boundaries
+        # Near the middle chunk boundaries and the north polar chunk boundary
+        dec = np.array([58.9, 58.9, 58.9, 58.9, 58.9, 58.9])
         chunk_gen = ChunkGeneratorByGrid(margin=1)
         expected_result = [[], [], [1], [2], [3], [4], [5], [0], [], [], [], [], [], []]
         result = chunk_gen.coor2id_boundary(ra, dec)

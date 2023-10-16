@@ -4,6 +4,7 @@ import numpy as np
 from SphericalMatch.Toolbox_Spherical import distances_to_target, point_offset, rotate_radec_about_axis
 from SphericalMatch.Toolbox_Spherical import great_circle_distance
 
+
 class TestAngularDistance(unittest.TestCase):
 
     # 1. Distance between the North and South celestial poles.
@@ -36,6 +37,7 @@ class TestAngularDistance(unittest.TestCase):
         expected_distance = 0
         self.assertTrue(np.isclose(distances_to_target(point1, np.array([point2])), expected_distance)[0])
 
+
 class TestPointOffset(unittest.TestCase):
 
     def setUp(self):
@@ -49,6 +51,7 @@ class TestPointOffset(unittest.TestCase):
                 new_point = point_offset(self.initial_point, distance, direction)
                 computed_distance = distances_to_target(self.initial_point, np.array([new_point]))[0]
                 self.assertTrue(np.isclose(computed_distance, distance, atol=1e-4))
+
 
 class TestPointOffsetExtremeCases(unittest.TestCase):
 
@@ -95,6 +98,7 @@ class TestPointOffsetExtremeCases(unittest.TestCase):
         new_point_360 = point_offset(self.random_point, 10, 360)
         self.check_distance(self.random_point, new_point_0, 10)
         self.check_distance(self.random_point, new_point_360, 10)
+
 
 class TestRotateRADEC(unittest.TestCase):
 
@@ -166,8 +170,9 @@ class TestRotateRADEC(unittest.TestCase):
         new_ra1, new_dec1 = rotate_radec_about_axis(ra, dec, axis_ra, axis_dec, theta1)
         new_ra2, new_dec2 = rotate_radec_about_axis(new_ra1, new_dec1, axis_ra, axis_dec, theta2)
         new_ra_combined, new_dec_combined = rotate_radec_about_axis(ra, dec, axis_ra, axis_dec, theta1 + theta2)
-        self.assertTrue(np.isclose(new_ra2, new_ra_combined, atol=1e-5) and np.isclose(new_dec2, new_dec_combined, atol=1e-5))
+        self.assertTrue(np.isclose(new_ra2, new_ra_combined, atol=1e-5)
+                        and np.isclose(new_dec2, new_dec_combined, atol=1e-5))
 
-        
+
 if __name__ == '__main__':
     unittest.main()
