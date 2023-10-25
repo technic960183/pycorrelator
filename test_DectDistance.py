@@ -112,7 +112,7 @@ class TestCelestialGrouping_RandomGrid(unittest.TestCase):
         grid = generate_celestial_grid(dec_bounds=70)
         self.tolerance = 1  # deg
         self.expected_groups, self.all_points = create_groups_from_grid(
-            grid, self.tolerance, seed=seed, ring_radius=(0.5, 1.0))
+            grid, self.tolerance, seed=seed, ring_radius=(0.9999, 1.0))
 
     @unittest.skip("This test is for the disjoint set method.")
     def test_group_by_disjoint_set(self):
@@ -142,6 +142,22 @@ class TestCelestialGrouping_Random(unittest.TestCase):
         output_groups_qt = group_by_quadtree(all_points, tolerance)
         problematic_groups = check_group_match(output_groups_dfs, output_groups_qt)
         self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
+
+    def test_comparing_chunk_setting(self):
+        ra, dec = generate_random_point(10000, seed=0)
+        all_points = np.array([ra, dec]).T
+        tolerance = 1.5
+        output_groups_base = group_by_quadtree(all_points, tolerance, dec_bound=60, ring_chunk=[6, 6])
+        for i in range(400):
+            print(f"Test {i+1} started!")
+            dec = np.random.uniform(50, 80)
+            N = np.random.randint(2, 6)
+            ring = [np.random.randint(6, 12) for _ in range(N)]
+            output_groups_test = group_by_quadtree(all_points, tolerance, dec_bound=dec, ring_chunk=ring)
+            problematic_groups = check_group_match(output_groups_test, output_groups_base)
+            self.assertEqual(
+                len(problematic_groups),
+                0, f"Failed groups: {problematic_groups} with dec_bound={dec}, ring_chunk={ring}")
 
 
 class TestCelestialGrouping(unittest.TestCase):
