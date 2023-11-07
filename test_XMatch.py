@@ -93,6 +93,14 @@ def check_Xmatching(expected_matches: dict, output_matches: defaultdict):
             print(f"Group {central} does not match!")
     return problematic_matches
 
+def print_format_match(problematic_matches, central_point, surrounding_points):
+    for match in problematic_matches:
+        p = central_point[match[0]]
+        central_point_str = f"({p[0]:.2f}, {p[1]:.2f})"
+        pps = surrounding_points[match[1]]
+        surrounding_points_str = ", ".join([f"({point[0]:.2f}, {point[1]:.2f})" for point in pps])
+        print(f"[X] {central_point_str}: [{surrounding_points_str}]")
+
 
 class TestCelestialXMatching_RandomGrid(unittest.TestCase):
     """
@@ -128,13 +136,30 @@ class TestCelestialXMatching_RandomGrid(unittest.TestCase):
         print_format_match(problematic_matches, self.two_catalogs[0], self.two_catalogs[1])
         self.assertEqual(len(problematic_matches), 0, f"Failed groups: {problematic_matches}")
 
-def print_format_match(problematic_matches, central_point, surrounding_points):
-    for match in problematic_matches:
-        p = central_point[match[0]]
-        central_point_str = f"({p[0]:.2f}, {p[1]:.2f})"
-        pps = surrounding_points[match[1]]
-        surrounding_points_str = ", ".join([f"({point[0]:.2f}, {point[1]:.2f})" for point in pps])
-        print(f"[X] {central_point_str}: [{surrounding_points_str}]")
+    def test_self_match_by_quadtree(self):
+        combine = np.concatenate([self.two_catalogs[1], self.two_catalogs[0]], axis=0)
+        output_matches = XMatch(combine, combine, self.tolerance)
+        problematic_matches = []
+        err_msg = ""
+        for central, expected_neighbors in self.expected_matching.items():
+            matched = False
+            output_neighbors = output_matches[central + len(self.two_catalogs[1])]
+            if len(output_neighbors) != len(expected_neighbors) + 1:  # Check if the number of points in the group match
+                problematic_matches.append((central, expected_neighbors))
+                print(f"Number of points in group {central} does not match!")
+                print(f"Expected {len(expected_neighbors) + 1} but got {len(output_neighbors)}")
+                continue
+            expected_neighbors.append(central + len(self.two_catalogs[1]))
+            if set(output_neighbors) == set(expected_neighbors):  # Check if all points in the group match
+                matched = True
+                break
+            if not matched:
+                problematic_matches.append((central, expected_neighbors))
+                print(f"Group {central} does not match!")
+                err_msg += f"[X] Expected {expected_neighbors} groups but got {output_matches}.\n"
+        self.assertEqual(len(problematic_matches), 0, err_msg)
+
+
 
 
 if __name__ == "__main__":

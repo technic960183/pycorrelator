@@ -63,5 +63,6 @@ class TestChunkGeneratorByGrid_coor2id_boundary(unittest.TestCase):
 
 
 # Running the tests
-suite = unittest.TestLoader().loadTestsFromTestCase(TestChunkGeneratorByGrid_coor2id_boundary)
-unittest.TextTestRunner(verbosity=2).run(suite)
+if __name__ == '__main__':
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestChunkGeneratorByGrid_coor2id_central)
+    unittest.TextTestRunner(verbosity=2).run(suite)
