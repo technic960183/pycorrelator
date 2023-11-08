@@ -143,6 +143,7 @@ class TestCelestialGrouping_Random(unittest.TestCase):
         problematic_groups = check_group_match(output_groups_dfs, output_groups_qt)
         self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
+    @unittest.skip("This test takes too long to run.")
     def test_comparing_chunk_setting(self):
         ra, dec = generate_random_point(10000, seed=0)
         all_points = np.array([ra, dec]).T

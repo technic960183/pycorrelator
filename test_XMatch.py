@@ -3,6 +3,7 @@ from SphericalMatch.XMatch import XMatch
 from test.test_DectDistance import generate_celestial_grid
 from collections import defaultdict
 import numpy as np
+import pandas as pd
 import unittest
 
 
@@ -124,11 +125,15 @@ class TestCelestialXMatching_RandomGrid(unittest.TestCase):
     def setUp(self):
         # This method will be called before each test, setting up the common resources
         seed = np.random.randint(0, 1e5)
+        panda = True
         print(f"Seed: {seed}")
-        grid = generate_celestial_grid(dec_bounds=70, ra_offset=0)
-        self.tolerance = 1  # deg
+        grid = generate_celestial_grid(dec_bounds=70, ra_step=3, dec_step=3)
+        self.tolerance = 0.5  # deg
         self.expected_matching, self.two_catalogs = create_catalogs_from_grid(
-            grid, self.tolerance, seed=seed, ring_radius=(0.999, 1.0))
+            grid, self.tolerance, seed=seed, ring_radius=(0.999, 1.0), fraction=0.8)
+        if panda:
+            self.two_catalogs = (pd.DataFrame(self.two_catalogs[0], columns=['Ra', 'Dec']),
+                                    pd.DataFrame(self.two_catalogs[1], columns=['Ra', 'Dec']))
 
     def test_match_by_quadtree(self):
         output_matches = XMatch(self.two_catalogs[0], self.two_catalogs[1], self.tolerance)
@@ -158,9 +163,6 @@ class TestCelestialXMatching_RandomGrid(unittest.TestCase):
                 print(f"Group {central} does not match!")
                 err_msg += f"[X] Expected {expected_neighbors} groups but got {output_matches}.\n"
         self.assertEqual(len(problematic_matches), 0, err_msg)
-
-
-
 
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCelestialXMatching_RandomGrid)
