@@ -1,6 +1,6 @@
 from SphericalMatch.Toolbox_Spherical import point_offset, generate_random_point
 from SphericalMatch.XMatch import XMatch
-from test.test_DectDistance import generate_celestial_grid
+from test.test_FoF import generate_celestial_grid
 from collections import defaultdict
 import numpy as np
 import pandas as pd

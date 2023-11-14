@@ -1,6 +1,6 @@
 from SphericalMatch.Toolbox_Spherical import point_offset, generate_random_point
-from SphericalMatch.DetectDistance_OtherMethod import group_by_disjoint_set, group_by_DFS
-from SphericalMatch.DetectDistance_Scipy import group_by_quadtree
+from SphericalMatch.FoF_OtherMethod import group_by_disjoint_set, group_by_DFS
+from SphericalMatch.FoF_Scipy import group_by_quadtree
 import numpy as np
 import unittest
 
