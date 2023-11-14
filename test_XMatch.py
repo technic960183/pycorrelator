@@ -164,6 +164,88 @@ class TestCelestialXMatching_RandomGrid(unittest.TestCase):
                 err_msg += f"[X] Expected {expected_neighbors} groups but got {output_matches}.\n"
         self.assertEqual(len(problematic_matches), 0, err_msg)
 
+
+class TestInputFormatXMatch(unittest.TestCase):
+
+    def setUp(self):
+        self.tolerance = 3
+        self.r1 = [1, 2, 8]
+        self.d1 = [3, 4, 6]
+        self.r2 = [5, 6, 7]
+        self.d2 = [7, 8, 9]
+
+    def test_with_index(self):
+        # Test with dataframes that have an index
+        df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1}, index=[0, 1, 2])
+        df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2}, index=[0, 1, 2])
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+
+    def test_without_index(self):
+        # Test with dataframes without an index
+        df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1})
+        df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2})
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+
+    def test_non_successive_index(self):
+        # Test with dataframes that have a non-successive index
+        df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1}, index=[0, 2, 4])
+        df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2}, index=[1, 3, 5])
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+
+    def test_unsorted_data(self):
+        # Test with unsorted data
+        df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1}, index=[2, 0, 1])
+        df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2}, index=[8, 7, 4])
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+
+    def test_with_numpy(self):
+        # Test with numpy arrays
+        df1 = np.array([[1, 3], [2, 4], [8, 6]]) # shape (3, 2)
+        df2 = np.array([[5, 7], [6, 8], [7, 9]]) # shape (3, 2)
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+
+    def test_column_names(self):
+        # Test with dataframes that have different column names
+        df1 = pd.DataFrame({"ra": self.r1, "dec": self.d1}, index=[0, 1, 2])
+        df2 = pd.DataFrame({"RA": self.r2, "DEC": self.d2}, index=[0, 1, 2])
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+        df1 = pd.DataFrame({"ra": self.r1, "dec": self.d1}, index=[0, 1, 2])
+        df2 = pd.DataFrame({"RA": self.r2, "Dec": self.d2}, index=[0, 1, 2])
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+
+    def test_key_with_index(self):
+        # Test with dataframes that have a column named 'index' or 'level_0'
+        df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1, "index": [10, 20, 30]})
+        df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2, "index": [10, 20, 30], "level_0": [10, 20, 30]})
+        try:
+            self.result = XMatch(df1, df2, self.tolerance)
+            # If no exception is raised, fail the test
+            self.fail("ExpectedException not raised")
+        except ValueError:
+            self.result = {}
+
+    def test_empty_and_one_row(self):
+        # Test with empty dataframes
+        df1 = pd.DataFrame({"Ra": [], "Dec": []})
+        df2 = pd.DataFrame({"Ra": [5], "Dec": [7]})
+        self.result = XMatch(df1, df2, self.tolerance)
+        self.assertIsNotNone(self.result)  # Assert result is not None
+
+    # Additional tests to consider:
+    # - Test with invalid data types
+    # - Test with tolerance values (e.g., 0, negative, very large)
+
+    def tearDown(self):
+        print(self.result)
+
+
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCelestialXMatching_RandomGrid)
     unittest.TextTestRunner(verbosity=2).run(suite)
