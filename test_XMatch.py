@@ -136,14 +136,14 @@ class TestCelestialXMatching_RandomGrid(unittest.TestCase):
                                     pd.DataFrame(self.two_catalogs[1], columns=['Ra', 'Dec']))
 
     def test_match_by_quadtree(self):
-        output_matches = XMatch(self.two_catalogs[0], self.two_catalogs[1], self.tolerance)
+        output_matches = XMatch(self.two_catalogs[0], self.two_catalogs[1], self.tolerance).get_result_dict()
         problematic_matches = check_Xmatching(self.expected_matching, output_matches)
         print_format_match(problematic_matches, self.two_catalogs[0], self.two_catalogs[1])
         self.assertEqual(len(problematic_matches), 0, f"Failed groups: {problematic_matches}")
 
     def test_self_match_by_quadtree(self):
         combine = np.concatenate([self.two_catalogs[1], self.two_catalogs[0]], axis=0)
-        output_matches = XMatch(combine, combine, self.tolerance)
+        output_matches = XMatch(combine, combine, self.tolerance).get_result_dict()
         problematic_matches = []
         err_msg = ""
         for central, expected_neighbors in self.expected_matching.items():
