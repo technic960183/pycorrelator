@@ -1,6 +1,10 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import unittest
 import numpy as np
-from SphericalMatch.ChunkGenerator_Grid import ChunkGeneratorByGrid
+from lensfinder.match import ChunkGeneratorByGrid
 
 
 class TestChunkGeneratorByGrid_coor2id_central(unittest.TestCase):

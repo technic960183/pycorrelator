@@ -1,6 +1,10 @@
-from SphericalMatch.Toolbox_Spherical import point_offset, generate_random_point
-from SphericalMatch.FoF_OtherMethod import group_by_disjoint_set, group_by_DFS
-from SphericalMatch.FoF_Scipy import group_by_quadtree
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from lensfinder.match import point_offset, generate_random_point
+from lensfinder.match import group_by_disjoint_set, group_by_DFS
+from lensfinder.match import group_by_quadtree
 import numpy as np
 import unittest
 

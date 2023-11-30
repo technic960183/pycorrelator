@@ -1,6 +1,10 @@
-from SphericalMatch.Toolbox_Spherical import point_offset, generate_random_point
-from SphericalMatch.XMatch import XMatch
-from test.test_FoF import generate_celestial_grid
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from lensfinder.match import point_offset, generate_random_point
+from lensfinder.match import XMatch
+from test_FoF import generate_celestial_grid
 from collections import defaultdict
 import numpy as np
 import pandas as pd
