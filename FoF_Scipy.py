@@ -1,9 +1,9 @@
 # from SphericalMatch.Chunk import ChunkGeneratorByGrid, ChunkGeneratorByDenseGrid
-from SphericalMatch.ChunkGenerator_Grid import GridChunkGenerator
-from SphericalMatch.Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
-from SphericalMatch.Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
-from SphericalMatch.DisjointSet import DisjointSet
-from SphericalMatch.EuclideanVsAngularDistanceAnalysis_Local import compute_error
+from .ChunkGenerator_Grid import GridChunkGenerator
+from .Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
+from .Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
+from .DisjointSet import DisjointSet
+from .EuclideanVsAngularDistanceAnalysis_Local import compute_error
 from scipy.spatial import KDTree
 import numpy as np
 import pandas as pd

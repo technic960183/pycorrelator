@@ -1,10 +1,10 @@
-from SphericalMatch.QuadTree import DataQuadTree
-from SphericalMatch.ChunkGenerator_Grid import ChunkGeneratorByGrid
-from SphericalMatch.Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
-from SphericalMatch.Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
-from SphericalMatch.Toolbox_Spherical import point_offset
-from SphericalMatch.ConvexHull import inner_grid_points
-from SphericalMatch.DisjointSet import DisjointSet
+from .QuadTree import DataQuadTree
+from .ChunkGenerator_Grid import ChunkGeneratorByGrid
+from .Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
+from .Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
+from .Toolbox_Spherical import point_offset
+from .ConvexHull import inner_grid_points
+from .DisjointSet import DisjointSet
 import numpy as np
 import pandas as pd
 

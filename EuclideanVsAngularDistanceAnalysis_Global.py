@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import minkowski
-from SphericalMatch.Toolbox_Spherical import distances_to_target, point_offset
+from .Toolbox_Spherical import distances_to_target, point_offset
 
 
 '''

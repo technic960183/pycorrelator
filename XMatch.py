@@ -2,12 +2,13 @@ import pandas as pd
 import numpy as np
 from scipy.spatial import KDTree
 from collections import defaultdict
-from SphericalMatch.ChunkGenerator_Grid import GridChunkGenerator
-from SphericalMatch.XMatchResult import XMatchResult
-from SphericalMatch.Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
-from SphericalMatch.Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
-from SphericalMatch.Toolbox_Spherical import distances_to_target
-from SphericalMatch.EuclideanVsAngularDistanceAnalysis_Local import compute_error
+from .ChunkGenerator_Grid import GridChunkGenerator
+from .XMatchResult import XMatchResult
+from .Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
+from .Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
+from .Toolbox_Spherical import distances_to_target
+from .EuclideanVsAngularDistanceAnalysis_Local import compute_error
+
 
 def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
     """

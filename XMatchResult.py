@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 from collections import Counter
-from ObjectsManager.FileIO import WriteTractor
+from ..objects.FileIO import WriteTractor
 
 class XMatchResult:
 

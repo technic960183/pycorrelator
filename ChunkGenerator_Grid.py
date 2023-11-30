@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from SphericalMatch.Chunk import Chunk
-from SphericalMatch.ChunkGenerator import ChunkGenerator
-from SphericalMatch.Toolbox_Spherical import great_circle_distance
+from .Chunk import Chunk
+from .ChunkGenerator import ChunkGenerator
+from .Toolbox_Spherical import great_circle_distance
 
 
 class GridChunkConfig:

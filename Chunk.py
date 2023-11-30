@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from SphericalMatch.Toolbox_Spherical import great_circle_distance
+from .Toolbox_Spherical import great_circle_distance
 
 
 class Chunk:

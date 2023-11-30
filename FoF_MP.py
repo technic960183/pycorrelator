@@ -1,6 +1,6 @@
-from SphericalMatch.ChunkGenerator_Grid import ChunkGeneratorByGrid, ChunkGeneratorBySuperDenseGrid
-from SphericalMatch.FoF_Scipy import group_by_quadtree_chunk
-from SphericalMatch.DisjointSet import DisjointSet
+from .ChunkGenerator_Grid import ChunkGeneratorByGrid, ChunkGeneratorBySuperDenseGrid
+from .FoF_Scipy import group_by_quadtree_chunk
+from .DisjointSet import DisjointSet
 import multiprocessing
 import numpy as np
 import pandas as pd

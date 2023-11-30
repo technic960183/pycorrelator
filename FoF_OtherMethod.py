@@ -1,5 +1,5 @@
-from SphericalMatch.DisjointSet import DisjointSet
-from SphericalMatch.Toolbox_Spherical import distances_to_target
+from .DisjointSet import DisjointSet
+from .Toolbox_Spherical import distances_to_target
 import numpy as np
 import pandas as pd
 
