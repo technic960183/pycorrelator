@@ -74,7 +74,7 @@ def Verify_Input(data: pd.DataFrame | np.ndarray, retain_index: bool):
     data.reset_index(inplace=True)
     return data
 
-def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, inplace=False):
+def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, inplace=False, verbose=True):
     """
     Purpose: This function performs a cross-match between two catalogs.
     Parameters:
@@ -84,6 +84,7 @@ def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, 
         - retain_index (bool): Whether to retain the index in the input.
         - inplace (bool): Whether to perform the cross-match inplace. If True, the
             function will modify the input catalogs.
+        - verbose (bool): Whether to print the progress.
     Returns:
         - XMatchResult: A XMatchResult object that contains the cross-match result.
     """
@@ -102,7 +103,8 @@ def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, 
         raise ValueError("The two catalogs have different number of chunks!")
     merged_dict = defaultdict(list)
     for i in range(len(cg1.chunks)):
-        print(f"Started Chunk {i}")
+        if verbose:
+            print(f"Started Chunk {i}")
         dd = XMatch_chunk((cg1.chunks[i], cg2.chunks[i], tolerance))
         if i == 0:
             merged_dict = dd
