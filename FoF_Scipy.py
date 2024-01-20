@@ -3,6 +3,7 @@ from .ChunkGenerator_Grid import GridChunkGenerator
 from .Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
 from .Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
 from .DisjointSet import DisjointSet
+from .FoFResult import FoFResult
 from .EuclideanVsAngularDistanceAnalysis_Local import compute_error
 from scipy.spatial import KDTree
 import numpy as np
@@ -24,8 +25,9 @@ def group_by_quadtree(objects_df: pd.DataFrame, tolerance, dec_bound=60, ring_ch
         for i, j in groups_index:
             ds.union(i, j)
     groups = ds.get_groups()
-    objects_coordinates = objects_df[['Ra', 'Dec']].values
-    return [[tuple(objects_coordinates[i, :]) for i in g] for g in groups]
+    # objects_coordinates = objects_df[['Ra', 'Dec']].values
+    # return [[tuple(objects_coordinates[i, :]) for i in g] for g in groups]
+    return FoFResult(objects_df, tolerance, groups)
 
 
 def group_by_quadtree_chunk(args):

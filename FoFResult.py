@@ -12,8 +12,18 @@ class FoFResult:
         self.result_list = result_list
 
     def get_coordinates(self):
+        """
+        Returns a list of lists of tuples of coordinates of objects in each group.
+        """
         objects_coordinates = self.df[['Ra', 'Dec']].values
         return [[tuple(objects_coordinates[i, :]) for i in g] for g in self.result_list]
+    
+    def get_group_coordinates(self):
+        """
+        Returns a list of tuples of coordinates of the groups.
+        """
+        objects_coordinates = self.df[['Ra', 'Dec']].values
+        return [np.average(objects_coordinates[g, :], axis=0) for g in self.result_list]
     
     def get_group_dataframe(self, min_group_size=1):
         new_index_tuples = []

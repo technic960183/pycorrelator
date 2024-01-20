@@ -1,5 +1,6 @@
 from .ChunkGenerator_Grid import ChunkGeneratorByGrid, ChunkGeneratorBySuperDenseGrid
 from .FoF_Scipy import group_by_quadtree_chunk
+from .FoFResult import FoFResult
 from .DisjointSet import DisjointSet
 import multiprocessing
 import numpy as np
@@ -10,7 +11,7 @@ def group_by_quadtree(objects_df: pd.DataFrame, tolerance):
     if type(objects_df) == np.ndarray:
         objects_df = pd.DataFrame(objects_df, columns=['Ra', 'Dec'])
     objects_df.reset_index(inplace=True)
-    # CG = ChunkGeneratorByGrid()
+    # CG = ChunkGeneratorByGrid(margin=tolerance)
     CG = ChunkGeneratorBySuperDenseGrid(margin=tolerance)
     CG.distribute(objects_df)
     ds = DisjointSet(len(objects_df))
@@ -24,5 +25,6 @@ def group_by_quadtree(objects_df: pd.DataFrame, tolerance):
             ds.union(i, j)
 
     groups = ds.get_groups()
-    objects_coordinates = objects_df[['Ra', 'Dec']].values
-    return [[tuple(objects_coordinates[i, :]) for i in g] for g in groups]
+    # objects_coordinates = objects_df[['Ra', 'Dec']].values
+    # return [[tuple(objects_coordinates[i, :]) for i in g] for g in groups]
+    return FoFResult(objects_df, tolerance, groups)
