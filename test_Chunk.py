@@ -4,7 +4,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import unittest
 import numpy as np
+import pandas as pd
 from lensfinder.match import ChunkGeneratorByGrid
+from lensfinder.match import ChunkGeneratorByDenseGrid, ChunkGeneratorBySuperDenseGrid
+from lensfinder.match import GridChunkGenerator
+from lensfinder.match import DisjointSet
+from lensfinder.match.FoFResult import FoFResult 
+from lensfinder.match.FoF_Scipy import group_by_quadtree_chunk
 
 
 class TestChunkGeneratorByGrid_coor2id_central(unittest.TestCase):
@@ -65,6 +71,38 @@ class TestChunkGeneratorByGrid_coor2id_boundary(unittest.TestCase):
         result = chunk_gen.coor2id_boundary(ra, dec)
         self.assertEqual(result, expected_result)
 
+class TestChunkIntegratingFoF(unittest.TestCase):
+
+    def group_by_quadtree_scipy(self, objects_df: pd.DataFrame, tolerance, chunk_gen):
+        print(f"[Scipy Version] Using single process to group {len(chunk_gen.chunks)} chunks.")
+        ds = DisjointSet(len(objects_df))
+        chunk_gen.distribute(objects_df)
+        for chunk in chunk_gen.chunks:
+            groups_index = group_by_quadtree_chunk((chunk, tolerance))
+            for i, j in groups_index:
+                ds.union(i, j)
+        groups = ds.get_groups()
+        return FoFResult(objects_df, tolerance, groups)
+
+    def setUp(self):
+        r = np.random.uniform(size=(1000, 2))
+        objects_df = pd.DataFrame(r, columns=['Ra', 'Dec'])
+        self.df_a = objects_df.copy()
+        self.df_a.reset_index(inplace=True)
+        self.df_b = objects_df.copy()
+        self.df_b.reset_index(inplace=True)
+
+    def test_different_chunk(self):
+        tolerance = 0.01
+        cg_a = GridChunkGenerator(margin=2*tolerance)
+        cg_a.set_symmetric_ring_chunk(60, [6, 6])
+        cg_b = ChunkGeneratorByGrid(margin=2*tolerance)
+        result_a = self.group_by_quadtree_scipy(self.df_a, tolerance, cg_a)
+        result_b = self.group_by_quadtree_scipy(self.df_b, tolerance, cg_b)
+        print(len(result_a.get_coordinates()))
+        print(len(result_b.get_coordinates()))
+        self.assertEqual(len(result_a.get_coordinates()), len(result_b.get_coordinates()))
+        
 
 # Running the tests
 if __name__ == '__main__':
