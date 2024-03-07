@@ -20,14 +20,16 @@ class XMatchResult:
     def get_result_dict(self):
         return self.result_dict
     
-    def get_dataframe1(self, columns=['Ra', 'Dec', 'brickid', 'objid']):
+    def get_dataframe1(self, columns=['Ra', 'Dec']):
         idx = np.array(list(self.result_dict.keys())).astype(int)
         data_df = self.df1.iloc[idx][columns]
         data_df['N_match'] = [len(v) for v in self.result_dict.values()]
         return data_df
 
-    def get_serial_dataframe(self, columns=['Ra', 'Dec', 'brickid', 'objid']):
+    def get_serial_dataframe(self, columns=['Ra', 'Dec']):
         idx1 = np.array(list(self.result_dict.keys())).astype(int)
+        if len(idx1) == 0:
+            return pd.DataFrame(columns=columns)
         idx_combine = []
         is_df1 = []
         n_match = []
