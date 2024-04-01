@@ -20,13 +20,14 @@ class XMatchResult:
     def get_result_dict(self):
         return self.result_dict
     
-    def get_dataframe1(self, columns=['Ra', 'Dec']):
+    def get_dataframe1(self, columns=['Ra', 'Dec'], min_match=1):
         idx = np.array(list(self.result_dict.keys())).astype(int)
         data_df = self.df1.iloc[idx][columns]
         data_df['N_match'] = [len(v) for v in self.result_dict.values()]
+        data_df = data_df[data_df['N_match'] >= min_match]
         return data_df
 
-    def get_serial_dataframe(self, columns=['Ra', 'Dec']):
+    def get_serial_dataframe(self, columns=['Ra', 'Dec'], min_match=1):
         idx1 = np.array(list(self.result_dict.keys())).astype(int)
         if len(idx1) == 0:
             return pd.DataFrame(columns=columns)
@@ -34,13 +35,17 @@ class XMatchResult:
         is_df1 = []
         n_match = []
         for id in idx1:
+            id2 = self.result_dict[id]
+            if len(id2) < min_match:
+                continue
             idx_combine.append(id)
             is_df1.append(True)
-            id2 = self.result_dict[id]
             idx_combine += id2
             is_df1 += [False] * len(id2)
             n_match.append(len(id2))
             n_match += [0] * len(id2)
+        if len(idx_combine) == 0:
+            return pd.DataFrame(columns=columns)
         idx_combine = np.array(idx_combine).astype(int)
         is_df1 = np.array(is_df1)
         n1 = len(self.df1)
