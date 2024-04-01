@@ -110,7 +110,7 @@ def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, 
             merged_dict = dd
         else:
             merged_dict = unique_merge_defaultdicts(merged_dict, dd)
-    merged_dict = {k: v for k, v in merged_dict.items() if len(v) != 0} # Remove keys with empty values
+    # merged_dict = {k: v for k, v in merged_dict.items() if len(v) != 0} # Remove keys with empty values
     return XMatchResult(df1, df2, tolerance, merged_dict)
 
 def rotate_to_center(object_df, ra, dec):

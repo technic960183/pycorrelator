@@ -14,8 +14,8 @@ class XMatchResult:
         self.result_dict = result_dict
         # self.df_combine = None
     
-    def __str__(self):
-        return f"XMatchResult: number of matches={len(self.result_dict)}"
+    # def __str__(self):
+    #     return f"XMatchResult: number of matches={len(self.result_dict)}"
 
     def get_result_dict(self):
         return self.result_dict
