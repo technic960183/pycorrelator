@@ -1,7 +1,7 @@
-from .DisjointSet import DisjointSet
-from .Toolbox_Spherical import distances_to_target
 import numpy as np
 import pandas as pd
+from .disjoint_set import DisjointSet
+from .toolbox_spherical import distances_to_target
 
 
 def create_adjacency_matrix(objects_array, tolerance):

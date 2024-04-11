@@ -2,13 +2,13 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from lensfinder.match import point_offset, generate_random_point
-from lensfinder.match import XMatch
-from test_FoF import generate_celestial_grid
 from collections import defaultdict
+import unittest
 import numpy as np
 import pandas as pd
-import unittest
+from pycorrelator import point_offset, generate_random_point
+from pycorrelator import XMatch
+from test_fof import generate_celestial_grid
 
 
 def create_catalogs_from_grid(grid, tolerance=1, seed=None, fraction=0.5, ring_radius=(0, 1)):

@@ -1,9 +1,8 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import csv
 from collections import Counter
-from ..objects.FileIO import WriteTractor
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 class XMatchResult:
 
@@ -63,10 +62,7 @@ class XMatchResult:
         return rtn
     
     def save_as_h5(self, pathname, full=False, columns=['Ra', 'Dec', 'brickid', 'objid']):
-        if full:
-            WriteTractor(pathname, self.get_serial_dataframe(columns=columns))
-        else:
-            WriteTractor(pathname, self.get_dataframe1(columns=columns))
+        raise NotImplementedError("The method is not implemented yet.")
 
     def save_as_skyviewer(self, pathname, radius=5, colors={4: 'red', 3: 'yellow', 2: '#90EE90'}):
         """

@@ -1,13 +1,13 @@
-# from SphericalMatch.Chunk import ChunkGeneratorByGrid, ChunkGeneratorByDenseGrid
-from .ChunkGenerator_Grid import GridChunkGenerator
-from .Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
-from .Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
-from .DisjointSet import DisjointSet
-from .FoFResult import FoFResult
-from .EuclideanVsAngularDistanceAnalysis_Local import compute_error
-from scipy.spatial import KDTree
 import numpy as np
 import pandas as pd
+from scipy.spatial import KDTree
+from .chunk_generator_grid import GridChunkGenerator
+# from .chunk_generator_grid import ChunkGeneratorByGrid, ChunkGeneratorByDenseGrid
+from .disjoint_set import DisjointSet
+from .euclidean_vs_angular_distance_local import compute_error
+from .result_fof import FoFResult
+from .toolbox_spherical import radec_to_cartesian, cartesian_to_radec
+from .toolbox_spherical import great_circle_distance, rotate_radec_about_axis
 
 
 def group_by_quadtree(objects_df: pd.DataFrame, tolerance, dec_bound=60, ring_chunk=[6, 6]):

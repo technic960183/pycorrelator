@@ -4,8 +4,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import unittest
 import numpy as np
-from lensfinder.match import distances_to_target, point_offset, rotate_radec_about_axis
-from lensfinder.match import great_circle_distance
+from pycorrelator import distances_to_target, point_offset, rotate_radec_about_axis
+from pycorrelator import great_circle_distance
 
 
 class TestAngularDistance(unittest.TestCase):

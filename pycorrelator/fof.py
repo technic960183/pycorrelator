@@ -1,13 +1,13 @@
-from .QuadTree import DataQuadTree
-from .ChunkGenerator_Grid import ChunkGeneratorByGrid
-from .Toolbox_Spherical import radec_to_cartesian, cartesian_to_radec
-from .Toolbox_Spherical import great_circle_distance, rotate_radec_about_axis
-from .Toolbox_Spherical import point_offset
-from .ConvexHull import inner_grid_points
-from .FoFResult import FoFResult
-from .DisjointSet import DisjointSet
 import numpy as np
 import pandas as pd
+from .chunk_generator_grid import ChunkGeneratorByGrid
+from .convex_hull import inner_grid_points
+from .disjoint_set import DisjointSet
+from .quadtree import DataQuadTree
+from .result_fof import FoFResult
+from .toolbox_spherical import radec_to_cartesian, cartesian_to_radec
+from .toolbox_spherical import great_circle_distance, rotate_radec_about_axis
+from .toolbox_spherical import point_offset
 
 
 def map_to_discrete_grid(n_array, b):

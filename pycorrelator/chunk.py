@@ -1,6 +1,6 @@
-import pandas as pd
 import numpy as np
-from .Toolbox_Spherical import great_circle_distance
+import pandas as pd
+from .toolbox_spherical import great_circle_distance
 
 
 class Chunk:

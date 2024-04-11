@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+from scipy.special import expit as sigmoid_function
 from scipy.spatial.distance import euclidean
 from scipy.stats import linregress
-from scipy.special import expit as sigmoid_function
-from .Toolbox_Spherical import point_offset
+from .toolbox_spherical import point_offset
 
 '''
 This script provides a detailed analysis of the discrepancies between Euclidean 

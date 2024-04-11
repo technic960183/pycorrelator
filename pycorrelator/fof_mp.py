@@ -1,10 +1,10 @@
-from .ChunkGenerator_Grid import ChunkGeneratorByGrid, ChunkGeneratorBySuperDenseGrid
-from .FoF_Scipy import group_by_quadtree_chunk
-from .FoFResult import FoFResult
-from .DisjointSet import DisjointSet
 import multiprocessing
 import numpy as np
 import pandas as pd
+from .chunk_generator_grid import ChunkGeneratorByGrid, ChunkGeneratorBySuperDenseGrid
+from .disjoint_set import DisjointSet
+from .fof_scipy import group_by_quadtree_chunk
+from .result_fof import FoFResult
 
 
 def group_by_quadtree(objects_df: pd.DataFrame, tolerance):

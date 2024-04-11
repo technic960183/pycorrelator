@@ -2,10 +2,10 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import unittest
 import random
+import unittest
 import numpy as np
-from lensfinder.match import DataQuadTree
+from pycorrelator import DataQuadTree
 
 class TestDataQuadTreeInsertion(unittest.TestCase):
 

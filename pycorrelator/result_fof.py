@@ -1,9 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import csv
 from collections import Counter
-from ..objects.FileIO import WriteTractor
 
 class FoFResult:
     def __init__(self, df: pd.DataFrame, tolerance, result_list: list):
