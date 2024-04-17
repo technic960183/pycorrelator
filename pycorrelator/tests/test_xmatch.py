@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from pycorrelator import point_offset, generate_random_point
-from pycorrelator import XMatch
+from pycorrelator import xmatch
 from test_fof import generate_celestial_grid
 
 
@@ -140,14 +140,14 @@ class TestCelestialXMatching_RandomGrid(unittest.TestCase):
                                     pd.DataFrame(self.two_catalogs[1], columns=['Ra', 'Dec']))
 
     def test_match_by_quadtree(self):
-        output_matches = XMatch(self.two_catalogs[0], self.two_catalogs[1], self.tolerance).get_result_dict()
+        output_matches = xmatch(self.two_catalogs[0], self.two_catalogs[1], self.tolerance).get_result_dict()
         problematic_matches = check_Xmatching(self.expected_matching, output_matches)
         print_format_match(problematic_matches, self.two_catalogs[0], self.two_catalogs[1])
         self.assertEqual(len(problematic_matches), 0, f"Failed groups: {problematic_matches}")
 
     def test_self_match_by_quadtree(self):
         combine = np.concatenate([self.two_catalogs[1], self.two_catalogs[0]], axis=0)
-        output_matches = XMatch(combine, combine, self.tolerance).get_result_dict()
+        output_matches = xmatch(combine, combine, self.tolerance).get_result_dict()
         problematic_matches = []
         err_msg = ""
         for central, expected_neighbors in self.expected_matching.items():
@@ -182,46 +182,46 @@ class TestInputFormatXMatch(unittest.TestCase):
         # Test with dataframes that have an index
         df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1}, index=[0, 1, 2])
         df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2}, index=[0, 1, 2])
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
 
     def test_without_index(self):
         # Test with dataframes without an index
         df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1})
         df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2})
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
 
     def test_non_successive_index(self):
         # Test with dataframes that have a non-successive index
         df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1}, index=[0, 2, 4])
         df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2}, index=[1, 3, 5])
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
 
     def test_unsorted_data(self):
         # Test with unsorted data
         df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1}, index=[2, 0, 1])
         df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2}, index=[8, 7, 4])
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
 
     def test_with_numpy(self):
         # Test with numpy arrays
         df1 = np.array([[1, 3], [2, 4], [8, 6]]) # shape (3, 2)
         df2 = np.array([[5, 7], [6, 8], [7, 9]]) # shape (3, 2)
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
 
     def test_column_names(self):
         # Test with dataframes that have different column names
         df1 = pd.DataFrame({"ra": self.r1, "dec": self.d1}, index=[0, 1, 2])
         df2 = pd.DataFrame({"RA": self.r2, "DEC": self.d2}, index=[0, 1, 2])
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
         df1 = pd.DataFrame({"ra": self.r1, "dec": self.d1}, index=[0, 1, 2])
         df2 = pd.DataFrame({"RA": self.r2, "Dec": self.d2}, index=[0, 1, 2])
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
 
     def test_key_with_index(self):
@@ -229,7 +229,7 @@ class TestInputFormatXMatch(unittest.TestCase):
         df1 = pd.DataFrame({"Ra": self.r1, "Dec": self.d1, "index": [10, 20, 30]})
         df2 = pd.DataFrame({"Ra": self.r2, "Dec": self.d2, "index": [10, 20, 30], "level_0": [10, 20, 30]})
         try:
-            self.result = XMatch(df1, df2, self.tolerance)
+            self.result = xmatch(df1, df2, self.tolerance)
             # If no exception is raised, fail the test
             self.fail("ExpectedException not raised")
         except ValueError:
@@ -239,7 +239,7 @@ class TestInputFormatXMatch(unittest.TestCase):
         # Test with empty dataframes
         df1 = pd.DataFrame({"Ra": [], "Dec": []})
         df2 = pd.DataFrame({"Ra": [5], "Dec": [7]})
-        self.result = XMatch(df1, df2, self.tolerance)
+        self.result = xmatch(df1, df2, self.tolerance)
         self.assertIsNotNone(self.result)  # Assert result is not None
 
     # Additional tests to consider:

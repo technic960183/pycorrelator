@@ -5,9 +5,9 @@ from .convex_hull import inner_grid_points
 from .disjoint_set import DisjointSet
 from .quadtree import DataQuadTree
 from .result_fof import FoFResult
-from .toolbox_spherical import radec_to_cartesian, cartesian_to_radec
-from .toolbox_spherical import great_circle_distance, rotate_radec_about_axis
-from .toolbox_spherical import point_offset
+from .utilities_spherical import radec_to_cartesian, cartesian_to_radec
+from .utilities_spherical import great_circle_distance, rotate_radec_about_axis
+from .utilities_spherical import point_offset
 
 
 def map_to_discrete_grid(n_array, b):

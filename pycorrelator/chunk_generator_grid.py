@@ -1,7 +1,7 @@
 import numpy as np
 from .chunk import Chunk
 from .chunk_generator import ChunkGenerator
-from .toolbox_spherical import great_circle_distance
+from .utilities_spherical import great_circle_distance
 
 
 class GridChunkConfig:
@@ -108,7 +108,7 @@ class GridChunkGenerator(ChunkGenerator):
         # Ring chunks
         for i, config in enumerate(self.config_ring):
             ra_diff = np.abs(ra - config['center_ra'])
-            ra_diff = np.minimum(ra_diff, 360 - ra_diff)
+            ra_diff = np.minimum(ra_diff, 360 - ra_diff) # Not necessary. The central parts don't cross the 0-360 boundary.
             dec_diff = np.abs(dec - config['center_dec'])
             mask_ra = (ra_diff <= config['delta_ra'])
             mask_dec = (dec_diff <= config['delta_dec'])
@@ -134,7 +134,7 @@ class GridChunkGenerator(ChunkGenerator):
         # Middle chunks
         for config in self.config_ring:
             ra_diff = np.abs(ra - config['center_ra'])
-            ra_diff = np.minimum(ra_diff, 360 - ra_diff)
+            ra_diff = np.minimum(ra_diff, 360 - ra_diff) # Necessary. The boundary parts DO cross the 0-360 boundary.
             dec_diff = np.abs(dec - config['center_dec'])
             mask_ra = (ra_diff >= config['delta_ra']) & (ra_diff <= config['delta_ra'] + margin) & (
                 dec_diff <= config['delta_dec'] + margin)

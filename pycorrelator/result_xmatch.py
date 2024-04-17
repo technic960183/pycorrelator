@@ -60,9 +60,6 @@ class XMatchResult:
         rtn = XMatchResult(None, None, tolerance, None)
         rtn.df_combine = df
         return rtn
-    
-    def save_as_h5(self, pathname, full=False, columns=['Ra', 'Dec', 'brickid', 'objid']):
-        raise NotImplementedError("The method is not implemented yet.")
 
     def save_as_skyviewer(self, pathname, radius=5, colors={4: 'red', 3: 'yellow', 2: '#90EE90'}):
         """
@@ -113,33 +110,4 @@ class XMatchResult:
             plt.savefig(pathname)
         else:
             plt.show()
-
-    def apply_filters(self, filters, replace=True):
-        """
-        Purpose: Applies filters to the cross-match result.
-        Parameters:
-            - filters (list): A list of filters. Each filter is a function that takes in a dictionary
-            of the cross-match result and returns a boolean value.
-            - replace (bool): Whether to replace the cross-match result with the filtered result.
-        Return: The filtered serial_dataframe.
-        """
-        # [TODO] Generalize for df1 df2's data structure
-        # [FIXME] The filterings should be limited to df2
-        raise BrokenPipeError("The implementation is broken.")
-        filtered_df = self.df_combine.copy()
-        if 'N_match_filtered' in filtered_df.columns:
-            # filtered_df.drop(columns=['N_match_filtered'], inplace=True)
-            print("Warning: N_match_filtered already exists in the DataFrame. The column will be overwritten.")
-        for filter in filters:
-            filtered_df = filter.apply(filtered_df, copy=True)
-        df1_idx = np.where(filtered_df['is_df1'])[0]
-        df1_idx_plus = np.append(df1_idx, len(filtered_df))
-        N_match_new = np.zeros(len(filtered_df), dtype=np.int64) - 1
-        N_match_new[df1_idx] = np.diff(df1_idx_plus) - 1
-        filtered_df['N_match_filtered'] = N_match_new
-        filtered_df = filtered_df[filtered_df['N_match_filtered'] != 0].copy()
-        filtered_df[filtered_df['is_df1'] == False]['N_match_filtered'] = 0
-        if replace:
-            self.df_combine = filtered_df
-        return filtered_df
         

@@ -5,9 +5,9 @@ from scipy.spatial import KDTree
 from .chunk_generator_grid import GridChunkGenerator
 from .euclidean_vs_angular_distance_local import compute_error
 from .result_xmatch import XMatchResult
-from .toolbox_spherical import radec_to_cartesian, cartesian_to_radec
-from .toolbox_spherical import great_circle_distance, rotate_radec_about_axis
-from .toolbox_spherical import distances_to_target
+from .utilities_spherical import radec_to_cartesian, cartesian_to_radec
+from .utilities_spherical import great_circle_distance, rotate_radec_about_axis
+from .utilities_spherical import distances_to_target
 
 
 def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
@@ -45,7 +45,7 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
     result = defaultdict(list, {k: list(v) for k, v in zip(all_keys, all_values)})    
     return result
 
-def Verify_Input(data: pd.DataFrame | np.ndarray, retain_index: bool):
+def verify_input(data: pd.DataFrame | np.ndarray, retain_index: bool):
     if type(data) == np.ndarray:
         if data.shape[1] != 2:
             raise ValueError("The input array must have two columns!")
@@ -74,7 +74,7 @@ def Verify_Input(data: pd.DataFrame | np.ndarray, retain_index: bool):
     data.reset_index(inplace=True)
     return data
 
-def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, inplace=False, verbose=True):
+def xmatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, inplace=False, verbose=True):
     """
     Purpose: This function performs a cross-match between two catalogs.
     Parameters:
@@ -91,8 +91,8 @@ def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, 
     if not inplace:
         df1 = df1.copy()
         df2 = df2.copy()
-    df1 = Verify_Input(df1, retain_index)
-    df2 = Verify_Input(df2, retain_index)
+    df1 = verify_input(df1, retain_index)
+    df2 = verify_input(df2, retain_index)
     cg1 = GridChunkGenerator(margin=2*tolerance)
     cg2 = GridChunkGenerator(margin=2*tolerance)
     cg1.set_symmetric_ring_chunk(60, [6, 6])
@@ -105,7 +105,7 @@ def XMatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, 
     for i in range(len(cg1.chunks)):
         if verbose:
             print(f"Started Chunk {i}")
-        dd = XMatch_chunk((cg1.chunks[i], cg2.chunks[i], tolerance))
+        dd = xmatch_chunk((cg1.chunks[i], cg2.chunks[i], tolerance))
         if i == 0:
             merged_dict = dd
         else:
@@ -123,7 +123,7 @@ def rotate_to_center(object_df, ra, dec):
     rot_ra, rot_dec = rotate_radec_about_axis(object_df['Ra'], object_df['Dec'], normal_ra, normal_dec, angle)
     return rot_ra, rot_dec
 
-def XMatch_chunk(args):
+def xmatch_chunk(args):
     chunk1, chunk2, tolerance = args
     objects1, objects2 = chunk1.get_data(), chunk2.get_data()
     if chunk1.get_center() != chunk2.get_center():
@@ -137,13 +137,13 @@ def XMatch_chunk(args):
         raise ValueError("The two chunks have different farest distances!")
     SAFTY_FACTOR = 1.01
     A2E_factor = (1 + compute_error(chunk1.farest_distance(), tolerance)) * SAFTY_FACTOR
-    idx1, idxes2 = spherical_Xmatching(index1, rot_coor1, index2, rot_coor2, tolerance, A2E_factor)
+    idx1, idxes2 = spherical_xmatching(index1, rot_coor1, index2, rot_coor2, tolerance, A2E_factor)
     dd = defaultdict(list)
     for key, value in zip(idx1, idxes2):
         dd[key] = value
     return dd
 
-def spherical_Xmatching(idx1: np.array, coor1: np.array, idx2: np.array, coor2: np.array, tolerance, A2E_factor):
+def spherical_xmatching(idx1: np.array, coor1: np.array, idx2: np.array, coor2: np.array, tolerance, A2E_factor):
     qt1 = KDTree(coor1)
     qt2 = KDTree(coor2)
     list_of_indexes = qt1.query_ball_tree(qt2, tolerance * A2E_factor) # list of elements in idx2

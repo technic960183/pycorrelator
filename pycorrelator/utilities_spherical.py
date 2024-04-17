@@ -71,19 +71,15 @@ def point_offset(ra_dec, angular_distance, theta):
     d = np.radians(angular_distance)
     theta = np.radians(theta)
 
-    # Calculate DEC2
     dec2 = np.arcsin(np.sin(dec1) * np.cos(d) + np.cos(dec1) * np.sin(d) * np.cos(theta))
-
-    # Calculate RA2
     ra2 = ra1 + np.arctan2(np.sin(d) * np.sin(theta),
                            np.cos(dec1) * np.cos(d) - np.sin(dec1) * np.sin(d) * np.cos(theta))
 
-    # Ensure RA2 is in [0, 2*pi] range
+    # Ensure ra2 is in [0, 2*pi] range
     ra2 = ra2 % (2 * np.pi)
 
     # Convert back to degrees
     ra2, dec2 = np.degrees([ra2, dec2])
-
     return ra2, dec2
 
 

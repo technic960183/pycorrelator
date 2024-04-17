@@ -6,8 +6,8 @@ from .chunk_generator_grid import GridChunkGenerator
 from .disjoint_set import DisjointSet
 from .euclidean_vs_angular_distance_local import compute_error
 from .result_fof import FoFResult
-from .toolbox_spherical import radec_to_cartesian, cartesian_to_radec
-from .toolbox_spherical import great_circle_distance, rotate_radec_about_axis
+from .utilities_spherical import radec_to_cartesian, cartesian_to_radec
+from .utilities_spherical import great_circle_distance, rotate_radec_about_axis
 
 
 def group_by_quadtree(objects_df: pd.DataFrame, tolerance, dec_bound=60, ring_chunk=[6, 6]):
