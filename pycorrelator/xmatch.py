@@ -1,6 +1,5 @@
 from collections import defaultdict
 import numpy as np
-import pandas as pd
 from scipy.spatial import KDTree
 from .catalog import Catalog
 from .chunk import Chunk

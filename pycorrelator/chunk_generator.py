@@ -1,4 +1,3 @@
-import pandas as pd
 from .catalog import Catalog
 from .chunk import Chunk
 

@@ -84,4 +84,5 @@ class Catalog:
         self.ra = self.input_data[self.input_data.columns[hit_ra == 1][0]].values
         self.dec = self.input_data[self.input_data.columns[hit_dec == 1][0]].values
 
-        
+    def __len__(self):
+        return len(self.ra)

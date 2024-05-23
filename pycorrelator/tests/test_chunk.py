@@ -9,6 +9,7 @@ from pycorrelator import ChunkGeneratorByGrid
 from pycorrelator import ChunkGeneratorByDenseGrid, ChunkGeneratorBySuperDenseGrid
 from pycorrelator import GridChunkGenerator
 from pycorrelator import DisjointSet
+from pycorrelator.catalog import Catalog
 from pycorrelator.result_fof import FoFResult 
 from pycorrelator.fof_scipy import group_by_quadtree_chunk
 
@@ -76,13 +77,14 @@ class TestChunkIntegratingFoF(unittest.TestCase):
     def group_by_quadtree_scipy(self, objects_df: pd.DataFrame, tolerance, chunk_gen):
         print(f"[Scipy Version] Using single process to group {len(chunk_gen.chunks)} chunks.")
         ds = DisjointSet(len(objects_df))
-        chunk_gen.distribute(objects_df)
+        catalog = Catalog(objects_df)
+        chunk_gen.distribute(catalog)
         for chunk in chunk_gen.chunks:
             groups_index = group_by_quadtree_chunk((chunk, tolerance))
             for i, j in groups_index:
                 ds.union(i, j)
         groups = ds.get_groups()
-        return FoFResult(objects_df, tolerance, groups)
+        return FoFResult(catalog, tolerance, groups)
 
     def setUp(self):
         r = np.random.uniform(size=(1000, 2))
