@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
 
 
 class Catalog:
@@ -48,13 +49,21 @@ class Catalog:
             raise ValueError("The length of Ra and Dec must be the same!")
 
 
-    def get_coordiantes(self):
+    def get_coordiantes(self) -> NDArray[np.float64]:
         '''
         Purpose: Get the coordinate of the points in the catalog for xmatch and fof.
         Returns:
             - np.ndarray: The array of shape (N, 2) with [Ra, Dec].
         '''
         return np.vstack([self.ra, self.dec], dtype=np.float64).T
+    
+    def get_indexes(self) -> NDArray[np.int64]:
+        '''
+        Purpose: Get the indexes of the points in the catalog for xmatch and fof.
+        Returns:
+            - np.ndarray: The array of indexes of shape (N,).
+        '''
+        return np.arange(len(self.ra), dtype=np.int64)
         
     def __type_np_array(self):
         if self.input_data.ndim != 2:
