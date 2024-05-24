@@ -1,4 +1,5 @@
-import pandas as pd
+from .catalog import Catalog
+from .chunk import Chunk
 
 
 class ChunkGenerator:
@@ -7,33 +8,34 @@ class ChunkGenerator:
         '''
         Purpose: Initialize the chunk generator
         '''
-        self.chunks = []
+        self.chunks: list[Chunk] = []
         self.margin = margin
 
     def get_chunk(self, chunk_id):
         return self.chunks[chunk_id]
 
-    def distribute(self, data: pd.DataFrame):
+    def distribute(self, catalog: Catalog):
         '''
         Purpose: Distribute the data into chunks
         Parameters:
-        - data: pandas dataframe of data (should contain columns "Ra" and "Dec")
+        - catalog: The catalog to be distributed
         Returns:
-        - chunks: list of chunks
+        - chunks: list of chunks with data
         '''
-        ra = data["Ra"].values  # Could be optimized
-        dec = data["Dec"].values  # Could be optimized
+        coordiantes = catalog.get_coordiantes()
+        indexes = catalog.get_indexes()
+        ra, dec = coordiantes[:, 0], coordiantes[:, 1]
 
         # Get chunk ids for central coordinates
         central_chunk_ids = self.coor2id_central(ra, dec)
         for i in range(len(self.chunks)):
             mask = (central_chunk_ids == i)
-            self.chunks[i].add_central_data(data[mask])
+            self.chunks[i].add_central_data(coordiantes[mask], indexes[mask])
 
         # Get chunk ids for boundary coordinates
         boundary_chunk_indices = self.coor2id_boundary(ra, dec)
         for boundary_chunk_id, indices in enumerate(boundary_chunk_indices):  # May be a bug here
-            self.chunks[boundary_chunk_id].add_boundary_data(data.iloc[indices])
+            self.chunks[boundary_chunk_id].add_boundary_data(coordiantes[indices], indexes[indices])
 
         return self.chunks
 

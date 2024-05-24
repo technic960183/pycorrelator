@@ -6,7 +6,7 @@ from .utilities_spherical import great_circle_distance
 
 class GridChunkConfig:
 
-    def __init__(self, center, margin, width: tuple = None, dec_bound: float = None):
+    def __init__(self, center, margin, width: tuple | None = None, dec_bound: float | None = None):
         '''
         Parameters:
         - center: tuple of two floats (ra, dec) in degrees

@@ -1,7 +1,8 @@
 from collections import defaultdict
 import numpy as np
-import pandas as pd
 from scipy.spatial import KDTree
+from .catalog import Catalog
+from .chunk import Chunk
 from .chunk_generator_grid import GridChunkGenerator
 from .euclidean_vs_angular_distance_local import compute_error
 from .result_xmatch import XMatchResult
@@ -45,41 +46,12 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
     result = defaultdict(list, {k: list(v) for k, v in zip(all_keys, all_values)})    
     return result
 
-def verify_input(data: pd.DataFrame | np.ndarray, retain_index: bool):
-    if type(data) == np.ndarray:
-        if data.shape[1] != 2:
-            raise ValueError("The input array must have two columns!")
-        data = pd.DataFrame(data, columns=['Ra', 'Dec'])
-    elif type(data) != pd.DataFrame:
-        raise ValueError("The input data must be a numpy array or a pandas dataframe!")
-    ras = ['ra', 'Ra', 'RA']
-    decs = ['dec', 'Dec', 'DEC']
-    # count the number of columns that contain 'ra' or 'dec'
-    hit_ra = np.array([1 if col in ras else 0 for col in data.columns])
-    hit_dec = np.array([1 if col in decs else 0 for col in data.columns])
-    if sum(hit_ra) != 1 or sum(hit_dec) != 1:
-        raise ValueError("The input dataframe must have two columns named 'ra' and 'dec'!")
-    # rename the columns to 'Ra' and 'Dec'
-    if data.columns[hit_ra == 1][0] != 'Ra':
-        data.rename(columns={data.columns[hit_ra == 1][0]: 'Ra'}, inplace=True)
-    if data.columns[hit_dec == 1][0] != 'Dec':
-        data.rename(columns={data.columns[hit_dec == 1][0]: 'Dec'}, inplace=True)
-    # check if columns 'index' exist
-    # [BUG] possible bug: MultiIndex index
-    if 'index' in data.columns:
-        raise ValueError("The input dataframe must not have a column named 'index'!")
-    data.reset_index(inplace=True, drop=not retain_index)
-    if retain_index:
-        data.rename(columns={'index': 'original_index'}, inplace=True)
-    data.reset_index(inplace=True)
-    return data
-
-def xmatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, inplace=False, verbose=True):
+def xmatch(catalog1, catalog2, tolerance, retain_index=False, inplace=False, verbose=True):
     """
     Purpose: This function performs a cross-match between two catalogs.
     Parameters:
-        - objects_df1 (DataFrame): The first catalog.
-        - objects_df2 (DataFrame): The second catalog.
+        - catalog1 (array-like): The first catalog.
+        - catalog2 (array-like): The second catalog.
         - tolerance (float): The tolerance for the cross-match in degrees.
         - retain_index (bool): Whether to retain the index in the input.
         - inplace (bool): Whether to perform the cross-match inplace. If True, the
@@ -88,19 +60,19 @@ def xmatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, 
     Returns:
         - XMatchResult: A XMatchResult object that contains the cross-match result.
     """
-    if not inplace:
-        df1 = df1.copy()
-        df2 = df2.copy()
-    df1 = verify_input(df1, retain_index)
-    df2 = verify_input(df2, retain_index)
+    #if not inplace:
+    #    catalog1 = catalog1.copy()
+    #    catalog2 = catalog2.copy()
+    _catalog1 = Catalog(catalog1)
+    _catalog2 = Catalog(catalog2)
     cg1 = GridChunkGenerator(margin=2*tolerance)
     cg2 = GridChunkGenerator(margin=2*tolerance)
     cg1.set_symmetric_ring_chunk(60, [6, 6])
     cg2.set_symmetric_ring_chunk(60, [6, 6])
-    cg1.distribute(df1)
-    cg2.distribute(df2)
+    cg1.distribute(_catalog1)
+    cg2.distribute(_catalog2)
     if len(cg1.chunks) != len(cg2.chunks):
-        raise ValueError("The two catalogs have different number of chunks!")
+        raise BrokenPipeError("The two catalogs have different number of chunks! Please contact the developer.")
     merged_dict = defaultdict(list)
     for i in range(len(cg1.chunks)):
         if verbose:
@@ -111,28 +83,27 @@ def xmatch(df1: pd.DataFrame, df2: pd.DataFrame, tolerance, retain_index=False, 
         else:
             merged_dict = unique_merge_defaultdicts(merged_dict, dd)
     # merged_dict = {k: v for k, v in merged_dict.items() if len(v) != 0} # Remove keys with empty values
-    return XMatchResult(df1, df2, tolerance, merged_dict)
+    return XMatchResult(_catalog1, _catalog2, tolerance, merged_dict)
 
-def rotate_to_center(object_df, ra, dec):
+def rotate_to_center(object_coor, chunk_ra, chunk_dec):
     # Rotate the center of the chunk to (180, 0) of the celestial sphere
-    center_car = radec_to_cartesian(ra, dec)
+    center_car = radec_to_cartesian(chunk_ra, chunk_dec)
     normal_car = np.cross(center_car, np.array([-1., 0., 0.]))
     normal_car /= np.linalg.norm(normal_car)
     normal_ra, normal_dec = cartesian_to_radec(normal_car)
-    angle = great_circle_distance(ra, dec, 180, 0)
-    rot_ra, rot_dec = rotate_radec_about_axis(object_df['Ra'], object_df['Dec'], normal_ra, normal_dec, angle)
+    angle = great_circle_distance(chunk_ra, chunk_dec, 180, 0)
+    rot_ra, rot_dec = rotate_radec_about_axis(object_coor[:,0], object_coor[:,1], normal_ra, normal_dec, angle)
     return rot_ra, rot_dec
 
-def xmatch_chunk(args):
+def xmatch_chunk(args: tuple[Chunk, Chunk, float]):
     chunk1, chunk2, tolerance = args
     objects1, objects2 = chunk1.get_data(), chunk2.get_data()
+    index1, index2 = chunk1.get_index(), chunk2.get_index()
     if chunk1.get_center() != chunk2.get_center():
         raise ValueError("The two chunks have different centers!")
     ra, dec = chunk1.get_center()
     rot_coor1 = np.array(rotate_to_center(objects1, ra, dec)).T
     rot_coor2 = np.array(rotate_to_center(objects2, ra, dec)).T
-    index1 = objects1['index'].values
-    index2 = objects2['index'].values
     if chunk1.farest_distance() != chunk2.farest_distance():
         raise ValueError("The two chunks have different farest distances!")
     SAFTY_FACTOR = 1.01

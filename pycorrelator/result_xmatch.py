@@ -3,10 +3,11 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from .catalog import Catalog
 
 class XMatchResult:
 
-    def __init__(self, df1: pd.DataFrame, df2: pd.DataFrame, tolerance, result_dict: dict):
+    def __init__(self, df1: Catalog, df2: Catalog, tolerance, result_dict: dict):
         self.df1 = df1
         self.df2 = df2
         self.tolerance = tolerance
