@@ -79,7 +79,7 @@ class TestXMatchResult_Methods(unittest.TestCase):
             self.assertAlmostEqual(df.iloc[idx][columns[1]], self.coords1[i, 1])
             for j in range(self.n2):
                 idx = i * (self.n2 + 1) + j + 1
-                self.assertEqual(df.iloc[idx]['N_match'], 0)
+                self.assertEqual(df.iloc[idx]['N_match'], -1)
                 self.assertEqual(df.iloc[idx]['is_cat1'], False)
-                self.assertAlmostEqual(df.iloc[idx][columns[0]], self.coords2[i * self.n2 + j, 0])
-                self.assertAlmostEqual(df.iloc[idx][columns[1]], self.coords2[i * self.n2 + j, 1])
+                self.assertAlmostEqual(df.iloc[idx][columns[0]], self.coords2[i // self.n1 * self.n2 + j, 0])
+                self.assertAlmostEqual(df.iloc[idx][columns[1]], self.coords2[i // self.n1 * self.n2 + j, 1])

@@ -21,40 +21,47 @@ class XMatchResult:
         return self.result_dict
     
     def get_dataframe1(self, columns=['Ra', 'Dec'], min_match=1) -> pd.DataFrame:
-        idx = np.array(list(self.result_dict.keys())).astype(int)
-        coords_array = self.cat1.get_coordiantes()[idx]
-        idxes_array = self.cat1.get_indexes()[idx]
+        idxes_array = self.cat1.get_indexes()
+        coords_array = self.cat1.get_coordiantes()
         data_df = pd.DataFrame(coords_array, columns=columns, index=idxes_array)
         data_df['N_match'] = [len(v) for v in self.result_dict.values()]
         data_df = data_df[data_df['N_match'] >= min_match]
         return data_df
+    
+    def get_dataframe2(self, columns=['Ra', 'Dec'], min_match=1) -> pd.DataFrame:
+        idxes_array = self.cat2.get_indexes()
+        coords_array = self.cat2.get_coordiantes()
+        data_df = pd.DataFrame(coords_array, columns=columns, index=idxes_array)
+        data_df['N_match'] = [len(v) for v in self.result_dict.values()] # [FIXME] Reverse the result_dict
+        data_df = data_df[data_df['N_match'] >= min_match]
+        return data_df
 
     def get_serial_dataframe(self, columns=['Ra', 'Dec'], min_match=1) -> pd.DataFrame:
-        idx1 = np.array(list(self.result_dict.keys())).astype(int)
-        if len(idx1) == 0:
+        idxes1 = self.cat1.get_indexes()
+        if len(self.cat1) == 0:
             return pd.DataFrame(columns=columns)
         idx_combine = []
         is_df1 = []
         n_match = []
-        for id in idx1:
+        for id in idxes1:
             id2 = self.result_dict[id]
             if len(id2) < min_match:
                 continue
             idx_combine.append(id)
             is_df1.append(True)
-            idx_combine += id2
+            idx_combine.extend(id2)
             is_df1 += [False] * len(id2)
             n_match.append(len(id2))
-            n_match += [0] * len(id2)
+            n_match += [-1] * len(id2)
         if len(idx_combine) == 0:
             return pd.DataFrame(columns=columns)
-        idx_combine = np.array(idx_combine).astype(int)
+        idx_combine = np.array(idx_combine, dtype=np.int64)
         is_df1 = np.array(is_df1)
         n1 = len(self.cat1)
         idx_combine[~is_df1] += n1
-        coords_array1 = self.cat1.get_coordiantes()[idx1]
+        coords_array1 = self.cat1.get_coordiantes()
         coords_array2 = self.cat2.get_coordiantes()
-        idxes_array1 = self.cat1.get_indexes()[idx1]
+        idxes_array1 = self.cat1.get_indexes()
         idxes_array2 = -np.ones(len(self.cat2), dtype=int)
         df1 = pd.DataFrame(coords_array1, columns=columns, index=idxes_array1)
         df2 = pd.DataFrame(coords_array2, columns=columns, index=idxes_array2)
