@@ -28,8 +28,8 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
       it has a list of unique values. For unshared keys, it has the original list.
     """
     # Convert defaultdicts to arrays
-    keys1 = np.array(list(d1.keys()))
-    keys2 = np.array(list(d2.keys()))
+    keys1 = np.array(list(d1.keys()), dtype=np.int64)
+    keys2 = np.array(list(d2.keys()), dtype=np.int64)
     # Find intersection and unique keys in both arrays
     intersect_keys = np.intersect1d(keys1, keys2, assume_unique=True)
     unique_keys_d1 = np.setdiff1d(keys1, intersect_keys, assume_unique=True)
@@ -60,6 +60,7 @@ def xmatch(catalog1, catalog2, tolerance, retain_index=False, inplace=False, ver
     Returns:
         - XMatchResult: A XMatchResult object that contains the cross-match result.
     """
+    # [ENH]: Add an option for sorting the output
     #if not inplace:
     #    catalog1 = catalog1.copy()
     #    catalog2 = catalog2.copy()

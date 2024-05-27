@@ -1,5 +1,5 @@
 import csv
-from collections import Counter
+from collections import Counter, defaultdict
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,9 +7,9 @@ from .catalog import Catalog
 
 class XMatchResult:
 
-    def __init__(self, df1: Catalog, df2: Catalog, tolerance, result_dict: dict):
-        self.df1 = df1
-        self.df2 = df2
+    def __init__(self, cat1: Catalog, cat2: Catalog, tolerance, result_dict: defaultdict):
+        self.cat1 = cat1
+        self.cat2 = cat2
         self.tolerance = tolerance
         self.result_dict = result_dict
         # self.df_combine = None
@@ -20,14 +20,16 @@ class XMatchResult:
     def get_result_dict(self):
         return self.result_dict
     
-    def get_dataframe1(self, columns=['Ra', 'Dec'], min_match=1):
+    def get_dataframe1(self, columns=['Ra', 'Dec'], min_match=1) -> pd.DataFrame:
         idx = np.array(list(self.result_dict.keys())).astype(int)
-        data_df = self.df1.iloc[idx][columns]
+        coords_array = self.cat1.get_coordiantes()[idx]
+        idxes_array = self.cat1.get_indexes()[idx]
+        data_df = pd.DataFrame(coords_array, columns=columns, index=idxes_array)
         data_df['N_match'] = [len(v) for v in self.result_dict.values()]
         data_df = data_df[data_df['N_match'] >= min_match]
         return data_df
 
-    def get_serial_dataframe(self, columns=['Ra', 'Dec'], min_match=1):
+    def get_serial_dataframe(self, columns=['Ra', 'Dec'], min_match=1) -> pd.DataFrame:
         idx1 = np.array(list(self.result_dict.keys())).astype(int)
         if len(idx1) == 0:
             return pd.DataFrame(columns=columns)
@@ -48,12 +50,18 @@ class XMatchResult:
             return pd.DataFrame(columns=columns)
         idx_combine = np.array(idx_combine).astype(int)
         is_df1 = np.array(is_df1)
-        n1 = len(self.df1)
+        n1 = len(self.cat1)
         idx_combine[~is_df1] += n1
-        combined_df = pd.concat([self.df1, self.df2], ignore_index=True)
+        coords_array1 = self.cat1.get_coordiantes()[idx1]
+        coords_array2 = self.cat2.get_coordiantes()
+        idxes_array1 = self.cat1.get_indexes()[idx1]
+        idxes_array2 = -np.ones(len(self.cat2), dtype=int)
+        df1 = pd.DataFrame(coords_array1, columns=columns, index=idxes_array1)
+        df2 = pd.DataFrame(coords_array2, columns=columns, index=idxes_array2)
+        combined_df = pd.concat([df1, df2], ignore_index=False)
         data_df = combined_df.iloc[idx_combine][columns]
         data_df['N_match'] = n_match
-        data_df['is_df1'] = is_df1
+        data_df['is_cat1'] = is_df1
         return data_df
     
     @staticmethod
@@ -72,7 +80,7 @@ class XMatchResult:
             matched objects, and the values are the colors of the circles.
         """
         key_max = max(list(colors.keys()))
-        coordinate = lambda k: tuple(self.df1.iloc[int(k)][['Ra', 'Dec']].values)
+        coordinate = lambda k: tuple(self.cat1.iloc[int(k)][['Ra', 'Dec']].values)
         # List of tuples
         data = [coordinate(k) + (radius, colors[key_max]) for k, v in self.result_dict.items() if len(v) >= key_max]
         colors.pop(key_max)

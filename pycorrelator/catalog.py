@@ -48,7 +48,6 @@ class Catalog:
         if len(self.ra) != len(self.dec):
             raise ValueError("The length of Ra and Dec must be the same!")
 
-
     def get_coordiantes(self) -> NDArray[np.float64]:
         '''
         Purpose: Get the coordinate of the points in the catalog for xmatch and fof.
