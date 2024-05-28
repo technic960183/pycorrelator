@@ -45,7 +45,7 @@ class TestXMatchResult_Methods(unittest.TestCase):
     def test_get_dataframe1(self):
         result = xmatch(self.coords1, self.coords2, 2)
         columns = ['Ra', 'Deccc']
-        df = result.get_dataframe1(columns=columns)
+        df = result.get_dataframe1(coord_columns=columns)
         self.assertEqual(len(df), self.coords1.shape[0])
         self.assertListEqual(list(df.columns), columns + ['N_match'])
         for i in range(self.coords1.shape[0]):
@@ -59,20 +59,31 @@ class TestXMatchResult_Methods(unittest.TestCase):
         df = result.get_dataframe1(min_match=self.n2 + 1)
         self.assertEqual(len(df), 0)
 
-    def test_get_dataframe1_retain_all_columns(self):
+    def test_get_dataframe1_retain_all_columns_True(self):
         columns = ['RA', 'DEC']
         retain_columns = ['A', 'B']
         df1 = pd.DataFrame(self.coords1, columns=columns)
         df1['A'] = np.cos(self.coords1[:, 0]) + np.arange(self.coords1.shape[0])
         df1['B'] = np.sin(self.coords1[:, 1]) + np.arange(self.coords1.shape[0])
         result = xmatch(df1, self.coords2, 2)
-        df = result.get_dataframe1(columns=columns, retain_all_columns=True)
+        df = result.get_dataframe1(coord_columns=columns, retain_all_columns=True)
         self.assertEqual(len(df), self.coords1.shape[0])
         self.assertListEqual(list(df.columns), columns + ['N_match'] + retain_columns)
         for i in range(self.coords1.shape[0]):
             for rc in retain_columns:
                 self.assertAlmostEqual(df.loc[i, rc], df1.loc[i, rc])
         self.assertListEqual(list(df.index), list(range(self.coords1.shape[0])))
+
+    def test_get_dataframe1_retain_all_columns_False(self):
+        columns = ['RA', 'DEC']
+        retain_columns = ['A', 'B']
+        df1 = pd.DataFrame(self.coords1, columns=columns)
+        df1['A'] = np.cos(self.coords1[:, 0]) + np.arange(self.coords1.shape[0])
+        df1['B'] = np.sin(self.coords1[:, 1]) + np.arange(self.coords1.shape[0])
+        result = xmatch(df1, self.coords2, 2)
+        df = result.get_dataframe1(coord_columns=columns, retain_all_columns=False)
+        self.assertEqual(len(df), self.coords1.shape[0])
+        self.assertListEqual(list(df.columns), columns + ['N_match'])
 
     def test_get_dataframe1_retain_columns(self):
         columns = ['RA', 'DEC']
@@ -81,17 +92,17 @@ class TestXMatchResult_Methods(unittest.TestCase):
         df1['A'] = np.cos(self.coords1[:, 0]) + np.arange(self.coords1.shape[0])
         df1['B'] = np.sin(self.coords1[:, 1]) + np.arange(self.coords1.shape[0])
         result = xmatch(df1, self.coords2, 2)
-        df = result.get_dataframe1(columns=columns, retain_columns=[retain_columns[0]])
+        df = result.get_dataframe1(coord_columns=columns, retain_columns=['A'])
         self.assertEqual(len(df), self.coords1.shape[0])
-        self.assertListEqual(list(df.columns), columns + ['N_match'] + [retain_columns[0]])
+        self.assertListEqual(list(df.columns), columns + ['N_match'] + ['A'])
         for i in range(self.coords1.shape[0]):
-            self.assertAlmostEqual(df.loc[i, retain_columns[0]], df1.loc[i, retain_columns[0]])
+            self.assertAlmostEqual(df.loc[i, 'A'], df1.loc[i, 'A'])
         self.assertListEqual(list(df.index), list(range(self.coords1.shape[0])))
 
     def test_get_dataframe2(self):
         result = xmatch(self.coords1, self.coords2, 2)
         columns = ['Ra', 'Deccc']
-        df = result.get_dataframe2(columns=columns)
+        df = result.get_dataframe2(coord_columns=columns)
         self.assertEqual(len(df), self.coords2.shape[0])
         self.assertListEqual(list(df.columns), columns + ['N_match'])
         for i in range(self.coords2.shape[0]):
@@ -103,7 +114,7 @@ class TestXMatchResult_Methods(unittest.TestCase):
     def test_get_serial_dataframe(self):
         result = xmatch(self.coords1, self.coords2, 2)
         columns = ['Ra', 'Deccc']
-        df = result.get_serial_dataframe(columns=columns)
+        df = result.get_serial_dataframe(coord_columns=columns)
         self.assertEqual(len(df), self.coords1.shape[0] + self.coords2.shape[0] * self.n1)
         self.assertListEqual(list(df.columns), columns + ['N_match', 'is_cat1'])
         for i in range(self.coords1.shape[0]):
@@ -131,7 +142,7 @@ class TestXMatchResult_Methods(unittest.TestCase):
         df1['A'] = np.cos(self.coords1[:, 0]) + np.arange(self.coords1.shape[0])
         df1['B'] = np.sin(self.coords1[:, 1]) + np.arange(self.coords1.shape[0])
         result = xmatch(df1, self.coords2, 2)
-        df = result.get_serial_dataframe(columns=columns, retain_all_columns=True)
+        df = result.get_serial_dataframe(coord_columns=columns, retain_all_columns=True)
         self.assertEqual(len(df), self.coords1.shape[0] + self.coords2.shape[0] * self.n1)
         self.assertListEqual(list(df.columns), columns + ['N_match', 'is_cat1'] + retain_columns)
         for i in range(self.coords1.shape[0]):
@@ -154,7 +165,7 @@ class TestXMatchResult_Methods(unittest.TestCase):
         df2['A'] = -np.sin(self.coords2[:, 0]) - np.arange(self.coords2.shape[0])
         df2['C'] = np.abs(self.coords2[:, 1]) + np.arange(self.coords2.shape[0])
         result = xmatch(df1, df2, 2)
-        df = result.get_serial_dataframe(columns=columns, retain_columns=retain_columns)
+        df = result.get_serial_dataframe(coord_columns=columns, retain_columns=retain_columns)
         self.assertEqual(len(df), self.coords1.shape[0] + self.coords2.shape[0] * self.n1)
         self.assertListEqual(list(df.columns), columns + ['N_match', 'is_cat1'] + retain_columns)
         for i in range(self.coords1.shape[0]):
@@ -171,7 +182,7 @@ class TestXMatchResult_Methods(unittest.TestCase):
     def test_get_multiindex_dataframe(self):
         result = xmatch(self.coords1, self.coords2, 2)
         columns = ['Ra', 'Deccc']
-        df = result.get_multiindex_dataframe(columns=columns)
+        df = result.get_multiindex_dataframe(coord_columns=columns)
         self.assertEqual(len(df), self.coords1.shape[0] + self.coords2.shape[0] * self.n1)
         self.assertListEqual(list(df.columns), ['Catalog', 'Column'])
         self.assertListEqual(list(df.index), ['Group', 'Object'])

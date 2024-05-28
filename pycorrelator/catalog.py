@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
@@ -19,6 +20,8 @@ class Catalog:
         self.input_data = data
         self.ra = None # ra, longitude, azimuth
         self.dec = None # dec, latitude, alltitude
+        self.ra_column: Optional[str] = None
+        self.dec_column: Optional[str] = None
         if self.datatype == np.ndarray:
             self.__type_np_array()
         elif self.datatype == pd.DataFrame:
@@ -63,6 +66,35 @@ class Catalog:
             - np.ndarray: The array of indexes of shape (N,).
         '''
         return np.arange(len(self.ra), dtype=np.int64)
+    
+    def get_appending_data(self, retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
+        '''
+        Purpose: Get the appending data of the points in the catalog for xmatch and fof.
+        Parameters:
+            - retain_all_columns (bool): Whether to retain all the columns in the input dataframe.
+                No effect when retain_columns is not empty.
+            - retain_columns (list): The list of columns to retain in the input dataframe. Overrides
+                retain_all_columns if not empty.
+        Returns:
+            - pd.DataFrame: The dataframe of the appending data.
+        '''
+        if self.datatype != pd.DataFrame:
+            return pd.DataFrame(index=self.get_indexes())
+        columns = []
+        if retain_all_columns:
+            columns = list(self.input_data.columns)
+        if len(retain_columns) > 0:
+            columns = retain_columns
+        # Check if the columns are in the input DataFrame
+        non_existent_columns = [column for column in columns if column not in self.input_data.columns]  
+        if non_existent_columns:
+            raise KeyError(f"Columns {non_existent_columns} are not in the input DataFrame")
+        # Drop the ra and dec columns
+        if self.ra_column is not None and self.ra_column in columns:
+            columns.remove(self.ra_column)
+        if self.dec_column is not None and self.dec_column in columns:
+            columns.remove(self.dec_column)
+        return self.input_data[columns]
         
     def __type_np_array(self):
         if self.input_data.ndim != 2:
@@ -80,8 +112,10 @@ class Catalog:
         hit_dec = np.array([1 if col in DECS else 0 for col in self.input_data.columns])
         if sum(hit_ra) != 1 or sum(hit_dec) != 1:
             raise ValueError("The input dataframe must have two columns named 'Ra' and 'Dec'!")
-        self.ra = self.input_data[self.input_data.columns[hit_ra == 1][0]].values
-        self.dec = self.input_data[self.input_data.columns[hit_dec == 1][0]].values
+        self.ra_column = self.input_data.columns[hit_ra == 1][0]
+        self.dec_column = self.input_data.columns[hit_dec == 1][0]
+        self.ra = self.input_data[self.ra_column].values
+        self.dec = self.input_data[self.dec_column].values
 
     def __len__(self):
         return len(self.ra)
