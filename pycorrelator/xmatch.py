@@ -74,7 +74,7 @@ def xmatch(catalog1, catalog2, tolerance, retain_index=False, inplace=False, ver
     cg2.distribute(_catalog2)
     if len(cg1.chunks) != len(cg2.chunks):
         raise BrokenPipeError("The two catalogs have different number of chunks! Please contact the developer.")
-    merged_dict = defaultdict(list)
+    merged_dict = defaultdict(list) # [TODO] Change to dict or sorted dict, or don't assume the order of the keys.
     for i in range(len(cg1.chunks)):
         if verbose:
             print(f"Started Chunk {i}")
@@ -83,7 +83,6 @@ def xmatch(catalog1, catalog2, tolerance, retain_index=False, inplace=False, ver
             merged_dict = dd
         else:
             merged_dict = unique_merge_defaultdicts(merged_dict, dd)
-    # merged_dict = {k: v for k, v in merged_dict.items() if len(v) != 0} # Remove keys with empty values
     return XMatchResult(_catalog1, _catalog2, tolerance, merged_dict)
 
 def rotate_to_center(object_coor, chunk_ra, chunk_dec):

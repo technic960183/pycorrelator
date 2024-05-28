@@ -17,8 +17,13 @@ class XMatchResult:
     # def __str__(self):
     #     return f"XMatchResult: number of matches={len(self.result_dict)}"
 
-    def get_result_dict(self):
-        return self.result_dict
+    def get_result_dict(self) -> defaultdict:
+        # [FIXME] Temporary fix for the potential issue of unsorted dictionary
+        # This solution impacts the performance of the code.
+        renormalization_dd = defaultdict(list)
+        for idx in self.cat1.get_indexes():
+            renormalization_dd[idx] = self.result_dict[idx]
+        return renormalization_dd
     
     def get_dataframe1(self, min_match=1, coord_columns=['Ra', 'Dec'],
                        retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
@@ -39,7 +44,7 @@ class XMatchResult:
         idxes_array = self.cat1.get_indexes()
         coords_array = self.cat1.get_coordiantes()
         data_df = pd.DataFrame(coords_array, columns=coord_columns, index=idxes_array)
-        data_df['N_match'] = [len(v) for v in self.result_dict.values()]
+        data_df['N_match'] = [len(v) for v in self.get_result_dict().values()]
         append_df = self.cat1.get_appending_data(retain_all_columns, retain_columns)
         if len(append_df.columns) > 0:
             data_df = pd.concat([data_df, append_df], axis=1)
@@ -121,17 +126,17 @@ class XMatchResult:
         key_max = max(list(colors.keys()))
         coordinate = lambda k: tuple(self.cat1.iloc[int(k)][['Ra', 'Dec']].values)
         # List of tuples
-        data = [coordinate(k) + (radius, colors[key_max]) for k, v in self.result_dict.items() if len(v) >= key_max]
+        data = [coordinate(k) + (radius, colors[key_max]) for k, v in self.get_result_dict().items() if len(v) >= key_max]
         colors.pop(key_max)
         for num, color in colors.items():
-            data += [coordinate(k) + (radius, color) for k, v in self.result_dict.items() if len(v) == num]
+            data += [coordinate(k) + (radius, color) for k, v in self.get_result_dict().items() if len(v) == num]
         with open(pathname, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(['RA', 'DEC', 'RADIUS', 'COLOR'])
             writer.writerows(data)
             
     def number_distribution(self):
-        Ns = [len(v) for v in self.result_dict.values()]
+        Ns = [len(v) for v in self.get_result_dict().values()]
         unique_counts = Counter(Ns)
         return unique_counts
 
@@ -143,7 +148,7 @@ class XMatchResult:
             - end (int): The end of the range of the number of matches (inclusive).
             - pathname (str): The pathname of the output file. If None, the plot will be shown.
         """
-        num = lambda n: len([k for k, v in self.result_dict.items() if len(v) == n])
+        num = lambda n: len([k for k, v in self.get_result_dict().items() if len(v) == n])
         x_list = [i for i in range(start, end + 1)]
         y_list = [num(i) for i in x_list]
         bars = plt.bar(x_list, y_list)

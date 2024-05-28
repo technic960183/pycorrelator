@@ -192,4 +192,8 @@ class TestXMatchResult_Methods(unittest.TestCase):
         for i in range(self.coords1.shape[0]):
             group_df = df.loc[i]
             continue # [TODO] Check the content of the group dataframe
+
+    # [FIXME] Write a test to check that if itterating over the deaultdict, the keys won't be in the correct order.
+    # Thus yielding an incorrect result of N_match.
+
     
