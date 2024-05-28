@@ -67,7 +67,8 @@ class Catalog:
         '''
         return np.arange(len(self.ra), dtype=np.int64)
     
-    def get_appending_data(self, retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
+    def get_appending_data(self, retain_all_columns=True, retain_columns=[],
+                           invalid_key_error=True) -> pd.DataFrame:
         '''
         Purpose: Get the appending data of the points in the catalog for xmatch and fof.
         Parameters:
@@ -75,6 +76,8 @@ class Catalog:
                 No effect when retain_columns is not empty.
             - retain_columns (list): The list of columns to retain in the input dataframe. Overrides
                 retain_all_columns if not empty.
+            - invalid_key_error (bool): Whether to raise an error when the columns are not in the
+                input dataframe. Default is True.
         Returns:
             - pd.DataFrame: The dataframe of the appending data.
         '''
@@ -86,9 +89,11 @@ class Catalog:
         if len(retain_columns) > 0:
             columns = retain_columns
         # Check if the columns are in the input DataFrame
-        non_existent_columns = [column for column in columns if column not in self.input_data.columns]  
-        if non_existent_columns:
+        non_existent_columns = [col for col in columns if col not in self.input_data.columns]  
+        if non_existent_columns and invalid_key_error:
             raise KeyError(f"Columns {non_existent_columns} are not in the input DataFrame")
+        if not invalid_key_error: # Need to remove the non-existent columns only when invalid_key_error is False
+            columns = [col for col in columns if col in self.input_data.columns]
         # Drop the ra and dec columns
         if self.ra_column is not None and self.ra_column in columns:
             columns.remove(self.ra_column)

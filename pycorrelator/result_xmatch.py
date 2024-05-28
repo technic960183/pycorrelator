@@ -41,13 +41,14 @@ class XMatchResult:
         data_df = pd.DataFrame(coords_array, columns=coord_columns, index=idxes_array)
         data_df['N_match'] = [len(v) for v in self.result_dict.values()]
         append_df = self.cat1.get_appending_data(retain_all_columns, retain_columns)
-        if len(append_df) > 0:
+        if len(append_df.columns) > 0:
             data_df = pd.concat([data_df, append_df], axis=1)
         data_df = data_df[data_df['N_match'] >= min_match]
         return data_df
     
     def get_dataframe2(self, coord_columns=['Ra', 'Dec'], min_match=1,
                        retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
+        # Consider creating a new XMatchResult object with the reversed result_dict than calling get_dataframe1
         idxes_array = self.cat2.get_indexes()
         coords_array = self.cat2.get_coordiantes()
         data_df = pd.DataFrame(coords_array, columns=coord_columns, index=idxes_array)
@@ -55,8 +56,10 @@ class XMatchResult:
         data_df = data_df[data_df['N_match'] >= min_match]
         return data_df
 
-    def get_serial_dataframe(self, coord_columns=['Ra', 'Dec'], min_match=1,
+    def get_serial_dataframe(self, coord_columns=['Ra', 'Dec'], min_match=1, reverse=False,
                              retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
+        # [TODO] To get a reversed dataframe, we need to reverse the result_dict
+        # and create a new XMatchResult object with the reversed result_dict.
         idxes1 = self.cat1.get_indexes()
         if len(self.cat1) == 0:
             return pd.DataFrame(columns=coord_columns)
@@ -79,16 +82,25 @@ class XMatchResult:
         is_df1 = np.array(is_df1)
         n1 = len(self.cat1)
         idx_combine[~is_df1] += n1
-        coords_array1 = self.cat1.get_coordiantes()
-        coords_array2 = self.cat2.get_coordiantes()
         idxes_array1 = self.cat1.get_indexes()
-        idxes_array2 = -np.ones(len(self.cat2), dtype=int)
-        df1 = pd.DataFrame(coords_array1, columns=coord_columns, index=idxes_array1)
-        df2 = pd.DataFrame(coords_array2, columns=coord_columns, index=idxes_array2)
+        idxes_array2 = self.cat2.get_indexes()
+        df1 = pd.DataFrame(self.cat1.get_coordiantes(), columns=coord_columns, index=idxes_array1)
+        df2 = pd.DataFrame(self.cat2.get_coordiantes(), columns=coord_columns, index=idxes_array2)
+        append_df1 = self.cat1.get_appending_data(retain_all_columns, retain_columns, invalid_key_error=False)
+        append_df2 = self.cat2.get_appending_data(retain_all_columns, retain_columns, invalid_key_error=False)
+        if len(append_df1.columns) > 0:
+            append_df1.index = idxes_array1
+            df1 = pd.concat([df1, append_df1], axis=1)
+        if len(append_df2.columns) > 0:
+            append_df2.index = idxes_array2
+            df2 = pd.concat([df2, append_df2], axis=1)
         combined_df = pd.concat([df1, df2], ignore_index=False)
-        data_df = combined_df.iloc[idx_combine][coord_columns]
-        data_df['N_match'] = n_match
-        data_df['is_cat1'] = is_df1
+        data_df = combined_df.iloc[idx_combine]
+        non_existent_columns = [col for col in retain_columns if col not in data_df.columns]  
+        if non_existent_columns:
+            raise KeyError(f"Columns {non_existent_columns} are not in the input DataFrame")
+        data_df.insert(2, 'N_match', n_match)
+        data_df.insert(3, 'is_cat1', is_df1)
         return data_df
     
     @staticmethod
