@@ -130,6 +130,25 @@ class TestXMatchResult_Methods(unittest.TestCase):
                 self.assertAlmostEqual(df.iloc[idx][columns[0]], self.coords2[i // self.n1 * self.n2 + j, 0])
                 self.assertAlmostEqual(df.iloc[idx][columns[1]], self.coords2[i // self.n1 * self.n2 + j, 1])
 
+    def test_get_serial_dataframe_reverse(self):
+        result = xmatch(self.coords1, self.coords2, 2)
+        columns = ['Ra', 'Deccc']
+        df = result.get_serial_dataframe(coord_columns=columns, reverse=True)
+        self.assertEqual(len(df), self.coords2.shape[0] + self.coords1.shape[0] * self.n2)
+        self.assertListEqual(list(df.columns), columns + ['N_match', 'is_cat1'])
+        for i in range(self.coords2.shape[0]):
+            idx = i * (self.n1 + 1)
+            self.assertEqual(df.iloc[idx]['N_match'], self.n1)
+            self.assertEqual(df.iloc[idx]['is_cat1'], False)
+            self.assertAlmostEqual(df.iloc[idx][columns[0]], self.coords2[i, 0])
+            self.assertAlmostEqual(df.iloc[idx][columns[1]], self.coords2[i, 1])
+            for j in range(self.n1):
+                idx = i * (self.n1 + 1) + j + 1
+                self.assertEqual(df.iloc[idx]['N_match'], -1)
+                self.assertEqual(df.iloc[idx]['is_cat1'], True)
+                self.assertAlmostEqual(df.iloc[idx][columns[0]], self.coords1[i // self.n2 * self.n1 + j, 0])
+                self.assertAlmostEqual(df.iloc[idx][columns[1]], self.coords1[i // self.n2 * self.n1 + j, 1])
+
     def test_get_serial_dataframe_min_match(self):
         result = xmatch(self.coords1, self.coords2, 2)
         df = result.get_serial_dataframe(min_match=self.n2 + 1)

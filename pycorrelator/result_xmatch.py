@@ -12,7 +12,7 @@ class XMatchResult:
         self.cat2 = cat2
         self.tolerance = tolerance
         self.result_dict = result_dict
-        self.reverse_dict = None
+        self.result_dict_reserve = None
     
     # def __str__(self):
     #     return f"XMatchResult: number of matches={len(self.result_dict)}"
@@ -24,6 +24,17 @@ class XMatchResult:
         for idx in self.cat1.get_indexes():
             renormalization_dd[idx] = self.result_dict[idx]
         return renormalization_dd
+
+    def get_result_dict_reserve(self) -> defaultdict:
+        if self.result_dict_reserve is None:
+            temp_dd = defaultdict(list)
+            for k, v in self.result_dict.items():
+                for vv in v:
+                    temp_dd[vv].append(k)
+        self.result_dict_reserve = defaultdict(list)
+        for idx in self.cat2.get_indexes():
+            self.result_dict_reserve[idx] = temp_dd[idx]
+        return self.result_dict_reserve
     
     def get_dataframe1(self, min_match=1, coord_columns=['Ra', 'Dec'],
                        retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
@@ -57,14 +68,22 @@ class XMatchResult:
         idxes_array = self.cat2.get_indexes()
         coords_array = self.cat2.get_coordiantes()
         data_df = pd.DataFrame(coords_array, columns=coord_columns, index=idxes_array)
-        data_df['N_match'] = [len(v) for v in self.result_dict.values()] # [FIXME] Reverse the result_dict
+        data_df['N_match'] = [len(v) for v in self.get_result_dict_reserve().values()]
+        append_df = self.cat2.get_appending_data(retain_all_columns, retain_columns)
+        if len(append_df.columns) > 0:
+            data_df = pd.concat([data_df, append_df], axis=1)
         data_df = data_df[data_df['N_match'] >= min_match]
         return data_df
 
     def get_serial_dataframe(self, coord_columns=['Ra', 'Dec'], min_match=1, reverse=False,
                              retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
-        # [TODO] To get a reversed dataframe, we need to reverse the result_dict
-        # and create a new XMatchResult object with the reversed result_dict.
+        if reverse: # Create a new XMatchResult object with the reversed result_dict
+            reserve_result = self.__class__(self.cat2, self.cat1, self.tolerance, self.get_result_dict_reserve())
+            df = reserve_result.get_serial_dataframe(coord_columns, min_match, reverse=False,
+                                                     retain_all_columns=retain_all_columns,
+                                                     retain_columns=retain_columns)
+            df['is_cat1'] = ~df['is_cat1']
+            return df
         idxes1 = self.cat1.get_indexes()
         if len(self.cat1) == 0:
             return pd.DataFrame(columns=coord_columns)

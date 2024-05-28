@@ -43,27 +43,21 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
     all_keys = np.concatenate([intersect_keys, unique_keys_d1, unique_keys_d2])
     all_values = merged_values + values_unique_d1 + values_unique_d2
     # Convert back to defaultdict
-    result = defaultdict(list, {k: list(v) for k, v in zip(all_keys, all_values)})    
+    result = defaultdict(list, {k: list(v) for k, v in zip(all_keys, all_values)})
     return result
 
-def xmatch(catalog1, catalog2, tolerance, retain_index=False, inplace=False, verbose=True):
+def xmatch(catalog1, catalog2, tolerance, verbose=True):
     """
     Purpose: This function performs a cross-match between two catalogs.
     Parameters:
         - catalog1 (array-like): The first catalog.
         - catalog2 (array-like): The second catalog.
         - tolerance (float): The tolerance for the cross-match in degrees.
-        - retain_index (bool): Whether to retain the index in the input.
-        - inplace (bool): Whether to perform the cross-match inplace. If True, the
-            function will modify the input catalogs.
         - verbose (bool): Whether to print the progress.
     Returns:
         - XMatchResult: A XMatchResult object that contains the cross-match result.
     """
     # [ENH]: Add an option for sorting the output
-    #if not inplace:
-    #    catalog1 = catalog1.copy()
-    #    catalog2 = catalog2.copy()
     _catalog1 = Catalog(catalog1)
     _catalog2 = Catalog(catalog2)
     cg1 = GridChunkGenerator(margin=2*tolerance)
