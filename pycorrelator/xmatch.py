@@ -68,7 +68,7 @@ def xmatch(catalog1, catalog2, tolerance, verbose=True):
     cg2.distribute(_catalog2)
     if len(cg1.chunks) != len(cg2.chunks):
         raise BrokenPipeError("The two catalogs have different number of chunks! Please contact the developer.")
-    merged_dict = defaultdict(list) # [TODO] Change to dict or sorted dict, or don't assume the order of the keys.
+    merged_dict = defaultdict(list) # [FIXME] Change to dict or sorted dict, or don't assume the order of the keys.
     for i in range(len(cg1.chunks)):
         if verbose:
             print(f"Started Chunk {i}")

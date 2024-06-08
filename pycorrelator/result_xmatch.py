@@ -26,11 +26,11 @@ class XMatchResult:
         return renormalization_dd
 
     def get_result_dict_reserve(self) -> defaultdict:
-        if self.result_dict_reserve is None:
-            temp_dd = defaultdict(list)
-            for k, v in self.result_dict.items():
-                for vv in v:
-                    temp_dd[vv].append(k)
+        # if self.result_dict_reserve is None: # [TODO] Save the result_dict_reserve to improve performance
+        temp_dd = defaultdict(list) # Improve the performance after fixing the issue of unsorted dictionary
+        for k, v in self.result_dict.items():
+            for vv in v:
+                temp_dd[vv].append(k)
         self.result_dict_reserve = defaultdict(list)
         for idx in self.cat2.get_indexes():
             self.result_dict_reserve[idx] = temp_dd[idx]
@@ -64,7 +64,6 @@ class XMatchResult:
     
     def get_dataframe2(self, coord_columns=['Ra', 'Dec'], min_match=1,
                        retain_all_columns=True, retain_columns=[]) -> pd.DataFrame:
-        # Consider creating a new XMatchResult object with the reversed result_dict than calling get_dataframe1
         idxes_array = self.cat2.get_indexes()
         coords_array = self.cat2.get_coordiantes()
         data_df = pd.DataFrame(coords_array, columns=coord_columns, index=idxes_array)
