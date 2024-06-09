@@ -11,7 +11,7 @@ class Catalog:
         - data (array-like): The input data can be either a numpy array or a pandas dataframe.
           * np.array: The array must have a shape of (N, 2), representing N points with
             two values: [ra (azimuth, longitude), dec (alltitude, latitude)].
-          * pd.DataFrame: The dataframe must have two columns named 'Ra' and 'Dec' (plus all the
+          * pd.DataFrame: The dataframe must have two columns named 'Ra' and 'Dec' (or all the
             possible combinations with 'ra', 'dec'; 'RA', 'DEC').
     '''
 
