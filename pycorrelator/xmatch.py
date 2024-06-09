@@ -28,8 +28,8 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
       it has a list of unique values. For unshared keys, it has the original list.
     """
     # Convert defaultdicts to arrays
-    keys1 = np.array(list(d1.keys()))
-    keys2 = np.array(list(d2.keys()))
+    keys1 = np.array(list(d1.keys()), dtype=np.int64)
+    keys2 = np.array(list(d2.keys()), dtype=np.int64)
     # Find intersection and unique keys in both arrays
     intersect_keys = np.intersect1d(keys1, keys2, assume_unique=True)
     unique_keys_d1 = np.setdiff1d(keys1, intersect_keys, assume_unique=True)
@@ -43,7 +43,7 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
     all_keys = np.concatenate([intersect_keys, unique_keys_d1, unique_keys_d2])
     all_values = merged_values + values_unique_d1 + values_unique_d2
     # Convert back to defaultdict
-    result = defaultdict(list, {k: list(v) for k, v in zip(all_keys, all_values)})    
+    result = defaultdict(list, {k: list(v) for k, v in zip(all_keys, all_values)})
     return result
 
 def xmatch(catalog1, catalog2, tolerance, verbose=True):
@@ -57,6 +57,7 @@ def xmatch(catalog1, catalog2, tolerance, verbose=True):
     Returns:
         - XMatchResult: A XMatchResult object that contains the cross-match result.
     """
+    # [ENH]: Add an option for sorting the output
     _catalog1 = Catalog(catalog1)
     _catalog2 = Catalog(catalog2)
     cg1 = GridChunkGenerator(margin=2*tolerance)
@@ -67,7 +68,7 @@ def xmatch(catalog1, catalog2, tolerance, verbose=True):
     cg2.distribute(_catalog2)
     if len(cg1.chunks) != len(cg2.chunks):
         raise BrokenPipeError("The two catalogs have different number of chunks! Please contact the developer.")
-    merged_dict = defaultdict(list)
+    merged_dict = defaultdict(list) # [FIXME] Change to dict or sorted dict, or don't assume the order of the keys.
     for i in range(len(cg1.chunks)):
         if verbose:
             print(f"Started Chunk {i}")
@@ -76,7 +77,6 @@ def xmatch(catalog1, catalog2, tolerance, verbose=True):
             merged_dict = dd
         else:
             merged_dict = unique_merge_defaultdicts(merged_dict, dd)
-    # merged_dict = {k: v for k, v in merged_dict.items() if len(v) != 0} # Remove keys with empty values
     return XMatchResult(_catalog1, _catalog2, tolerance, merged_dict)
 
 def rotate_to_center(object_coor, chunk_ra, chunk_dec):

@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 from .chunk import Chunk
 from .chunk_generator import ChunkGenerator
@@ -6,7 +7,7 @@ from .utilities_spherical import great_circle_distance
 
 class GridChunkConfig:
 
-    def __init__(self, center, margin, width: tuple | None = None, dec_bound: float | None = None):
+    def __init__(self, center, margin, width: Optional[tuple] = None, dec_bound: Optional[float] = None):
         '''
         Parameters:
         - center: tuple of two floats (ra, dec) in degrees
