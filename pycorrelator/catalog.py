@@ -67,7 +67,7 @@ class Catalog:
         '''
         return np.arange(len(self.ra), dtype=np.int64)
     
-    def get_appending_data(self, retain_all_columns=True, retain_columns=[],
+    def get_appending_data(self, retain_all_columns=True, retain_columns=None,
                            invalid_key_error=True) -> pd.DataFrame:
         '''
         Purpose: Get the appending data of the points in the catalog for xmatch and fof.
@@ -86,8 +86,16 @@ class Catalog:
         columns = []
         if retain_all_columns:
             columns = list(self.input_data.columns)
-        if len(retain_columns) > 0:
-            columns = retain_columns
+        if retain_columns is not None:
+            if isinstance(retain_columns, list) and len(retain_columns) > 0:
+                if all(isinstance(col, str) for col in retain_columns):
+                    columns: list[str] = retain_columns
+                else:
+                    raise TypeError("The elements in retain_columns must be string of column names!")
+            elif isinstance(retain_columns, str):
+                raise TypeError(f"Cannot accept a string for retain_columns. Please provide a list: [{retain_columns}]")
+            else:
+                raise TypeError(f"Invalid type for retain_columns: {type(retain_columns)}")
         # Check if the columns are in the input DataFrame
         non_existent_columns = [col for col in columns if col not in self.input_data.columns]  
         if non_existent_columns and invalid_key_error:
