@@ -135,6 +135,11 @@ Get the coordinates of the objects in each group. Returns a list of lists, where
 
 Get the coordinates of the group centers. Returns a list of tuples, where each tuple contains the coordinates of the center of a group. The center is defined as the average of the coordinates of the objects in the group.
 
+#### get_group_sizes()
+`get_group_sizes() -> List[int]`
+
+Get the sizes of the groups. Returns a list of integers, where each integer is the number of objects in a group.
+
 #### get_group_dataframe()
 `get_group_dataframe(min_group_size=1, coord_columns=['Ra', 'Dec'], retain_all_columns=True, retain_columns=None) -> pandas.DataFrame`
 

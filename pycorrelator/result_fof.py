@@ -3,6 +3,7 @@ import numpy as np
 from .catalog import Catalog
 
 class FoFResult:
+    
     def __init__(self, catalog: Catalog, tolerance, result_list: list):
         self.catalog = catalog
         self.tolerance = tolerance
@@ -21,6 +22,12 @@ class FoFResult:
         """
         objects_coordinates = self.catalog.get_coordiantes()
         return [np.average(objects_coordinates[g, :], axis=0) for g in self.result_list]
+    
+    def get_group_sizes(self):
+        """
+        Returns a list of sizes of groups.
+        """
+        return [len(g) for g in self.result_list]
     
     def get_group_dataframe(self, min_group_size=1, coord_columns=['Ra', 'Dec'],
                             retain_all_columns=True, retain_columns=None):
