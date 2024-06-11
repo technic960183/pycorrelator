@@ -22,7 +22,8 @@ class FoFResult:
         objects_coordinates = self.catalog.get_coordiantes()
         return [np.average(objects_coordinates[g, :], axis=0) for g in self.result_list]
     
-    def get_group_dataframe(self, min_group_size=1):
+    def get_group_dataframe(self, min_group_size=1, coord_columns=['Ra', 'Dec'],
+                            retain_all_columns=True, retain_columns=None):
         raise BrokenPipeError("The method need to be fixed.")
         # [TODO] Modify the method to adapt to the new catalog structure
         new_index_tuples = []
