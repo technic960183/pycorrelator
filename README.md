@@ -152,7 +152,7 @@ Get a dataframe with MultiIndex. The first level of the index is the group index
 
 ##### Returns
 
-- `pandas.DataFrame`: A pandas dataframe with MultiIndex, where the first level is the group index and the second level is the index from the original catalog.
+- `pandas.DataFrame`: A pandas dataframe with MultiIndex, where the first level is the group index and the second level is the position based index from the original catalog.
 
 ## Examples
 

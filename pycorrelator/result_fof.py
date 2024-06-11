@@ -24,22 +24,19 @@ class FoFResult:
     
     def get_group_dataframe(self, min_group_size=1, coord_columns=['Ra', 'Dec'],
                             retain_all_columns=True, retain_columns=None):
-        raise BrokenPipeError("The method need to be fixed.")
-        # [TODO] Modify the method to adapt to the new catalog structure
         new_index_tuples = []
         original_indices = []
-
         for group_index, group_indices in enumerate(self.result_list):
-            # Skip groups smaller than the specified min_group_size
-            if len(group_indices) < min_group_size:
+            if len(group_indices) < min_group_size: # Skip groups with the size less than min_group_size
                 continue
-
             for object_index in group_indices:
                 new_index_tuples.append((group_index, object_index))
                 original_indices.append(object_index)
 
-        new_index = pd.MultiIndex.from_tuples(new_index_tuples, names=['Group', 'Object'])
-        grouped_df = self.catalog.loc[original_indices].copy()
-        grouped_df.index = new_index
-
+        data_df = pd.DataFrame(self.catalog.get_coordiantes(), columns=coord_columns, index=self.catalog.get_indexes())
+        append_df = self.catalog.get_appending_data(retain_all_columns, retain_columns)
+        if len(append_df.columns) > 0:
+            data_df = pd.concat([data_df, append_df], axis=1)
+        grouped_df = data_df.iloc[original_indices].copy()
+        grouped_df.index = pd.MultiIndex.from_tuples(new_index_tuples, names=['Group', 'Object'])
         return grouped_df

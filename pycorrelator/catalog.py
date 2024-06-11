@@ -93,7 +93,7 @@ class Catalog:
                 else:
                     raise TypeError("The elements in retain_columns must be string of column names!")
             elif isinstance(retain_columns, str):
-                raise TypeError(f"Cannot accept a string for retain_columns. Please provide a list: [{retain_columns}]")
+                raise TypeError(f"Cannot accept a string for retain_columns. Please provide it as a list: ['{retain_columns}']")
             else:
                 raise TypeError(f"Invalid type for retain_columns: {type(retain_columns)}")
         # Check if the columns are in the input DataFrame
