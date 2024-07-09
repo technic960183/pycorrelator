@@ -107,7 +107,7 @@ class Catalog:
             columns.remove(self.ra_column)
         if self.dec_column is not None and self.dec_column in columns:
             columns.remove(self.dec_column)
-        return self.input_data[columns]
+        return pd.DataFrame(self.input_data[columns].values, index=self.get_indexes(), columns=columns)
         
     def __type_np_array(self):
         if self.input_data.ndim != 2:
