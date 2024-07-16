@@ -6,6 +6,7 @@ venv/
 env/
 dist/
 build/
+docs/_*
 
 # VS Code
 .vscode/
