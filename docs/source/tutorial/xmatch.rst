@@ -1,7 +1,5 @@
-
-
-Cross-matching two catalogs
----------------------------
+Example: Cross-matching two catalogs
+====================================
 
 .. code-block:: python
 

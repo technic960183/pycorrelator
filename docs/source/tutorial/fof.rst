@@ -1,5 +1,5 @@
-Clustering using FoF algorithm
-------------------------------
+Example: Clustering using FoF algorithm
+=======================================
 
 .. code-block:: python
 

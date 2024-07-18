@@ -30,6 +30,8 @@ Contents
 
    install
    tutorial/index
+   ref/index
+   dev/index
 
 
 Indices and tables

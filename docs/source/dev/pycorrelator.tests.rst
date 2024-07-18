@@ -1,9 +1,6 @@
 pycorrelator.tests package
 ==========================
 
-Submodules
-----------
-
 pycorrelator.tests.test\_catalog module
 ---------------------------------------
 
