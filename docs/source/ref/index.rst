@@ -1,34 +1,22 @@
 API Reference
 =============
 
-fof\_scipy module
-------------------------------
-
-.. automodule:: pycorrelator.fof_scipy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-result\_fof module
--------------------------------
-
-.. automodule:: pycorrelator.result_fof
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 xmatch module
 --------------------------
 
-.. automodule:: pycorrelator.xmatch
+.. _xmatch-ref:
+.. autofunction:: pycorrelator.xmatch
+
+.. autoclass:: pycorrelator.XMatchResult
    :members:
    :undoc-members:
-   :show-inheritance:
 
-result\_xmatch module
-----------------------------------
+fof module
+------------------------------
 
-.. automodule:: pycorrelator.result_xmatch
+.. _fof-ref:
+.. autofunction:: pycorrelator.group_by_quadtree
+
+.. autoclass:: pycorrelator.FoFResult
    :members:
    :undoc-members:
-   :show-inheritance:

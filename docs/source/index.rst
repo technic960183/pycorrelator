@@ -10,16 +10,17 @@ Welcome to pycorrelator's documentation!
 This is particularly useful in fields such as astrophysics, geophysics, and any domain where objects are naturally distributed on a spherical surface.
 Currently, this package only support astrophysics coordinates (Ra, Dec) in degrees. More units and naming convention will be supported in the future.
 
-.. note::
-
-   This project is under active development.
-
 
 Quickstart
 ----------
 
-- If you want to perform cross-matching between two catalogs, use xmatch function. See [placeholder] for more details.
-- If you want to cluster the objects in a catalog, use fof function. See [placeholder] for more details.
+1. First, :doc:`install the package <install>`.
+2. Then,
+
+   - If you want to perform a cross-matching between two catalogs, use the :ref:`xmatch <xmatch-ref>` function.
+     See the :doc:`cross-matching example <tutorial/xmatch>` for how to use it.
+   - If you want to cluster the objects in a catalog with the Friends-of-Friends (FoF) algorithm, use
+     the :ref:`group_by_quadtree <fof-ref>` function. See the :doc:`clustering example <tutorial/fof>` for how to use it.
 
 
 Contents
@@ -33,6 +34,10 @@ Contents
    ref/index
    dev/index
 
+.. note::
+
+   This project is under active development. If you find any issue, please report it at
+   the GitHub repository's `issue tracker <https://github.com/technic960183/pycorrelator/issues>`_.
 
 Indices and tables
 ==================
