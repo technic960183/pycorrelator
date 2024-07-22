@@ -20,12 +20,12 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
     dictionary, it adds that key and its values directly to the result.
 
     Parameters:
-    - d1 (defaultdict): A dictionary with list-type values.
-    - d2 (defaultdict): Another dictionary with list-type values.
+        d1 (defaultdict): A dictionary with list-type values.
+        d2 (defaultdict): Another dictionary with list-type values.
 
     Returns:
-    - defaultdict: A dictionary with all keys from both d1 and d2. For shared keys,
-      it has a list of unique values. For unshared keys, it has the original list.
+        defaultdict: A dictionary with all keys from both d1 and d2. For shared keys,
+            it has a list of unique values. For unshared keys, it has the original list.
     """
     # Convert defaultdicts to arrays
     keys1 = np.array(list(d1.keys()), dtype=np.int64)
@@ -46,16 +46,24 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
     result = defaultdict(list, {k: list(v) for k, v in zip(all_keys, all_values)})
     return result
 
-def xmatch(catalog1, catalog2, tolerance, verbose=True):
-    """
-    Purpose: This function performs a cross-match between two catalogs.
-    Parameters:
-        - catalog1 (array-like): The first catalog.
-        - catalog2 (array-like): The second catalog.
-        - tolerance (float): The tolerance for the cross-match in degrees.
-        - verbose (bool): Whether to print the progress.
-    Returns:
-        - XMatchResult: A XMatchResult object that contains the cross-match result.
+def xmatch(catalog1, catalog2, tolerance, verbose=True) -> XMatchResult:
+    """Performs a cross-match between two catalogs.
+
+    Parameters
+    ----------
+    catalog1 : array-like
+        The first catalog.
+    catalog2 : array-like
+        The second catalog.
+    tolerance : float
+        The tolerance for the cross-match in degrees.
+    verbose : bool, optional
+        Whether to print the progress.
+
+    Returns
+    -------
+    XMatchResult
+        A XMatchResult object that contains the cross-match result.
     """
     # [ENH]: Add an option for sorting the output
     _catalog1 = Catalog(catalog1)

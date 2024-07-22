@@ -1,7 +1,7 @@
 API Reference
 =============
 
-xmatch module
+xmatch functionality
 --------------------------
 
 .. _xmatch-ref:
@@ -11,7 +11,7 @@ xmatch module
    :members:
    :undoc-members:
 
-fof module
+fof functionality
 ------------------------------
 
 .. _fof-ref:

@@ -10,7 +10,25 @@ from .utilities_spherical import radec_to_cartesian, cartesian_to_radec
 from .utilities_spherical import great_circle_distance, rotate_radec_about_axis
 
 
-def group_by_quadtree(catalog, tolerance, dec_bound=60, ring_chunk=[6, 6]):
+def group_by_quadtree(catalog, tolerance, dec_bound=60, ring_chunk=[6, 6]) -> FoFResult:
+    """Perform the Friends-of-Friends (FoF) grouping algorithm on a catalog.
+
+    This function applies the FoF algorithm to a given catalog. The algorithm works by linking objects
+    that are within a specified angular distance (tolerance) of each other, forming groups or clusters
+    of objects.
+
+    Parameters
+    ----------
+    catalog : array-like
+        The catalog to group.
+    tolerance : float
+        The tolerance for the grouping in degrees.
+
+    Returns
+    -------
+    FoFResult
+        The result of the Friends-of-Friends grouping.
+    """
     _catalog = Catalog(catalog)
     cg = GridChunkGenerator(margin=2*tolerance)
     cg.set_symmetric_ring_chunk(dec_bound, ring_chunk)

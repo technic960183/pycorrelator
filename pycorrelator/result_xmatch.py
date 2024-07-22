@@ -38,19 +38,24 @@ class XMatchResult:
     
     def get_dataframe1(self, min_match=0, coord_columns=['Ra', 'Dec'],
                        retain_all_columns=True, retain_columns=None) -> pd.DataFrame:
-        '''
-        Purpose: Get the dataframe of the first catalog with the number of matches.
-        Parameters:
-            - min_match (int, optional): The minimum number of matches for an object to be included
-                in the dataframe. Default is 0.
-            - coord_columns (List[str], optional): The names of the columns for the coordinates.
-                Default is ['Ra', 'Dec'].
-            - retain_all_columns (bool, optional): Whether to retain all the columns in the
-                input (dataframe). Default is True.
-            - retain_columns (List[str] optional): The names of the columns to retain in the output
-                dataframe. Will override retain_all_columns if not empty. Default is None.
-        Returns:
-            - pd.DataFrame: The dataframe of the first catalog with the number of matches.
+        '''Get the first catalog with the number of matches as a pandas dataframe.
+        
+        Parameters
+        ----------
+        min_match : int, optional
+            The minimum number of matches for an object to be included in the dataframe. Default is 0.
+        coord_columns : list[str], optional
+            The names of the columns for the coordinates. Default is ['Ra', 'Dec'].
+        retain_all_columns : bool, optional
+            Whether to retain all the columns in the input (dataframe). Default is True.
+        retain_columns : list[str], optional
+            The names of the columns to retain in the output dataframe. Will override retain_all_columns if not empty.
+            Default is None.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The dataframe of the first catalog with the number of matches.
         '''
         idxes_array = self.cat1.get_indexes()
         coords_array = self.cat1.get_coordiantes()
@@ -64,7 +69,8 @@ class XMatchResult:
     
     def get_dataframe2(self, min_match=0, coord_columns=['Ra', 'Dec'],
                        retain_all_columns=True, retain_columns=None) -> pd.DataFrame:
-        '''
+        '''Get the second catalog with the number of matches as a pandas dataframe.
+
         Please refer to the `get_dataframe1()` and replace the 'first catalog' with the 'second catalog'.
         '''
         idxes_array = self.cat2.get_indexes()
@@ -79,23 +85,29 @@ class XMatchResult:
 
     def get_serial_dataframe(self, min_match=1, reverse=False, coord_columns=['Ra', 'Dec'],
                              retain_all_columns=True, retain_columns=None) -> pd.DataFrame:
-        '''
-        Purpose: Get the dataframe by combining the two catalogs with the number of matches.
-            Each object from the first catalog with sufficient matches (as defined by min_match) 
-            appear first, followed by their matched objects from the second catalog.
-        Parameters:
-            - min_match (int, optional): The minimum number of matches for an object from the first
-                catalog to be included in the dataframe. Default is 1.
-            - reverse (bool, optional): Whether to reverse the order of catalogs (i.e., make the 
-                second catalog as the first and vice versa). Default is False.
-            - coord_columns (List[str], optional): The names of the columns for the coordinates.
-                Default is ['Ra', 'Dec'].
-            - retain_all_columns (bool, optional): Whether to retain all the columns in the
-                input (dataframe). Default is True.
-            - retain_columns (List[str], optional): The names of the columns to retain in the output
-                dataframe. Will override retain_all_columns if not empty. Default is None.    
-        Returns:
-            - pd.DataFrame: The serial dataframe of the two catalogs with the number of matches.
+        '''Get a pandas dataframe with the information of the matching of the two catalogs in a serial manner.
+
+        Each object from the first catalog with sufficient matches (as defined by min_match) appear first,
+        followed by their matched objects from the second catalog.
+
+        Parameters
+        ----------
+        min_match : int, optional
+            The minimum number of matches for an object from the first catalog to be included in the dataframe. Default is 1.
+        reverse : bool, optional
+            Whether to reverse the order of catalogs (i.e., make the second catalog as the first and vice versa). Default is False.
+        coord_columns : list[str], optional
+            The names of the columns for the coordinates. Default is ['Ra', 'Dec'].
+        retain_all_columns : bool, optional
+            Whether to retain all the columns in the input (dataframe). Default is True.
+        retain_columns : list[str], optional
+            The names of the columns to retain in the output dataframe. Will override retain_all_columns if not empty.
+            Default is None.
+         
+        Returns
+        -------
+        pandas.DataFrame
+            The serial dataframe of the two catalogs with the number of matches.
         '''
         if reverse: # Create a new XMatchResult object with the reversed result_dict
             reserve_result = self.__class__(self.cat2, self.cat1, self.tolerance, self.get_result_dict_reserve())
@@ -149,14 +161,6 @@ class XMatchResult:
         return data_df
 
     def save_as_skyviewer(self, pathname, radius=5, colors={4: 'red', 3: 'yellow', 2: '#90EE90'}):
-        """
-        Purpose: Saves the cross-match result as a skyviewer file.
-        Parameters:
-            - pathname (str): The pathname of the output file.
-            - radius (float): The radius of the circles in the skyviewer in arcsec.
-            - colors (dict): The colors of the circles in the skyviewer. The keys are the number of 
-            matched objects, and the values are the colors of the circles.
-        """
         raise DeprecationWarning("This method is deprecated without a replacement.")
         key_max = max(list(colors.keys()))
         coordinate = lambda k: tuple(self.cat1.iloc[int(k)][['Ra', 'Dec']].values)
@@ -170,19 +174,24 @@ class XMatchResult:
             writer.writerow(['RA', 'DEC', 'RADIUS', 'COLOR'])
             writer.writerows(data)
             
-    def number_distribution(self):
+    def number_distribution(self) -> Counter:
+        """Get the distribution of the number of matches for each object in the first catalog.
+
+        Returns
+        -------
+        collections.Counter
+            The distribution of the number of matches for each object in the first catalog.
+        """
         Ns = [len(v) for v in self.get_result_dict().values()]
         unique_counts = Counter(Ns)
         return unique_counts
 
     def draw_number_distribution(self, start=2, end=5, pathname=None):
-        """
-        Purpose: Draws the distribution of the number of matches for each object in the first catalog.
-        Parameters:
-            - start (int): The start of the range of the number of matches (inclusive).
-            - end (int): The end of the range of the number of matches (inclusive).
-            - pathname (str): The pathname of the output file. If None, the plot will be shown.
-        """
+        # Purpose: Draws the distribution of the number of matches for each object in the first catalog.
+        # Parameters:
+        #     - start (int): The start of the range of the number of matches (inclusive).
+        #     - end (int): The end of the range of the number of matches (inclusive).
+        #     - pathname (str): The pathname of the output file. If None, the plot will be shown.
         num = lambda n: len([k for k, v in self.get_result_dict().items() if len(v) == n])
         x_list = [i for i in range(start, end + 1)]
         y_list = [num(i) for i in x_list]

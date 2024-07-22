@@ -35,3 +35,9 @@ add_module_names = True
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+
+# -- Options for napoleon extension ------------------------------------------
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+napoleon_preprocess_types = False
+napoleon_use_rtype = True
