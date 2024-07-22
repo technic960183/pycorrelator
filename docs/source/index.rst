@@ -15,7 +15,8 @@ Quickstart
 ----------
 
 1. First, :doc:`install the package <install>`.
-2. Then,
+2. Second, make sure your data is in the :doc:`supported formats <tutorial/input_validation>`.
+3. Finally,
 
    - If you want to perform a cross-matching between two catalogs, use the :ref:`xmatch <xmatch-ref>` function.
      See the :doc:`cross-matching example <tutorial/xmatch>` for how to use it.
