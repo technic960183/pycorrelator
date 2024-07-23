@@ -49,6 +49,9 @@ def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
 def xmatch(catalog1, catalog2, tolerance, verbose=True) -> XMatchResult:
     """Performs a cross-match between two catalogs.
 
+    This function matches objects from two different catalogs based on their coordinates. Objects from
+    `catalog1` and `catalog2` that are within a specified angular distance (tolerance) are considered matches.
+
     Parameters
     ----------
     catalog1 : array-like
