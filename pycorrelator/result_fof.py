@@ -29,6 +29,7 @@ class FoFResult:
             A list of tuples of coordinates of the center of each group.
         """
         objects_coordinates = self.catalog.get_coordiantes()
+        # [FIXME] This return a list of NDArrays, not a list of tuples.
         return [np.average(objects_coordinates[g, :], axis=0) for g in self.result_list]
     
     def get_group_sizes(self) -> list[int]:

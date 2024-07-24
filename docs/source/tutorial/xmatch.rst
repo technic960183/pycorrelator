@@ -10,7 +10,7 @@ First, let's create two mock catalogs A and B:
 
     import numpy as np
 
-    # Create two mock catalogs
+    # Create two mock catalogs as numpy arrays
     catalogA = np.array([[80.894, 41.269], [120.689, -41.269], [10.689, -41.269]])
     catalogB = np.array([[10.688, -41.270], [10.689, -41.270], [10.690, -41.269], [120.690, -41.270]])
 
