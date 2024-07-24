@@ -50,7 +50,7 @@ Expected output::
           5        10.690 -41.269      2400        5     3
           7        10.689 -41.269      2700        5     2
 
-Here I set the tolerance to 0.01, which means that objects with a separation less than 0.01 degrees to any other
+Here we set the tolerance to 0.01, which means that objects with a separation less than 0.01 degrees to any other
 object in the same 'cluster' will be considered as duplicates. You need to adjust this value according to the
 properties of your catalog. The ``'dup_num'`` column shows the number of duplicates in each group, and the
 ``'rank'`` column shows the order of the object in the group sorted by the ranking column.
