@@ -8,3 +8,4 @@ This section contains tutorials on how to use the **pycorrelator** package.
    input_validation
    xmatch
    fof
+   duplicates_removal

@@ -36,7 +36,7 @@ The result object contains the clustering results. Four methods are available to
 get_group_dataframe()
 ---------------------
 
-To get the clustering results with the appendind data (``"mag"`` in this case), use the
+To get the clustering results with the appendind data (``'mag'`` in this case), use the
 :func:`pycorrelator.FoFResult.get_group_dataframe` method:
 
 .. code-block:: python
@@ -101,7 +101,7 @@ If you want DataFrame with a single layer of index and the size of each group as
 
 .. code-block:: python
 
-    groups_df['group_size'] = groups_df.groupby(level='Group')['Ra'].transform('size')
+    groups_df['group_size'] = groups_df.groupby('Group')['Ra'].transform('size')
     groups_df.reset_index(level='Group', inplace=True)
     print(groups_df)
 
