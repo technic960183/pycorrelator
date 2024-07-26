@@ -12,20 +12,24 @@ from .utilities_spherical import distances_to_target
 
 
 def unique_merge_defaultdicts(d1: defaultdict, d2: defaultdict):
-    """
-    Joins two dictionaries, merging values for shared keys and preserving others.
+    """Joins two dictionaries, merging values for shared keys and preserving others.
 
     When both dictionaries have the same key, this function makes a new list 
     with every distinct value from either dictionary. If a key is only in one 
     dictionary, it adds that key and its values directly to the result.
 
-    Parameters:
-        d1 (defaultdict): A dictionary with list-type values.
-        d2 (defaultdict): Another dictionary with list-type values.
+    Parameters
+    ----------
+    d1 : defaultdict
+        A dictionary with list-type values.
+    d2 : defaultdict
+        Another dictionary with list-type values.
 
-    Returns:
-        defaultdict: A dictionary with all keys from both d1 and d2. For shared keys,
-            it has a list of unique values. For unshared keys, it has the original list.
+    Returns
+    -------
+    defaultdict
+        A dictionary with all keys from both d1 and d2. For shared keys, it has a list
+        of unique values. For unshared keys, it has the original list.
     """
     # Convert defaultdicts to arrays
     keys1 = np.array(list(d1.keys()), dtype=np.int64)
