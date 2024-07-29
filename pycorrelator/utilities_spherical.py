@@ -2,17 +2,22 @@ import numpy as np
 
 
 def distances_to_target(target, points):
-    """
-    Compute the great-circle distances from a target point to a list of other points on a sphere.
-    This function now also handles a single point as input.
+    """Compute the great-circle distances from a target point to a list of other points on a sphere.
 
-    Parameters:
-    - target: (RA, DEC) of the target point.
-    - points: numpy array of shape (n, 2) where n is the number of points. Each row is (RA, DEC) for a point.
-              Can also be a single point with shape (2,).
+    This function can also handles a single point as an input.
 
-    Returns:
-    - distances: numpy array of great-circle distances to the target point.
+    Parameters
+    ----------
+    target : tuple
+        (RA, DEC) of the target point.
+    points : numpy.ndarray | tuple
+        numpy array of shape (n, 2) where n is the number of points. Each row is (RA, DEC) for a point.
+        Can also be a single point with shape (2,).
+
+    Returns
+    -------
+    distances : numpy.ndarray
+        Great-circle distances to the target point.
     """
 
     # If points represent a single point, reshape it
@@ -34,15 +39,23 @@ def distances_to_target(target, points):
 
 
 def great_circle_distance(ra1, dec1, ra2, dec2):
-    """
-    Compute the great-circle distance between two points on a sphere using their right ascension and declination.
+    """Compute the great-circle distance between two points on a sphere using their right ascension and declination.
 
-    Parameters:
-    - ra1, dec1: Right ascension and declination of the first point (in degrees).
-    - ra2, dec2: Right ascension and declination of the second point (in degrees).
+    Parameters
+    ----------
+    ra1 : float
+        Right ascension of the first point in degrees.
+    dec1 : float
+        Declination of the first point in degrees.
+    ra2 : float
+        Right ascension of the second point in degrees.
+    dec2 : float
+        Declination of the second point in degrees.
 
-    Returns:
-    - Distance between the two points (in degrees).
+    Returns
+    -------
+    distance : float
+        Angular distance between the two points in degrees.
     """
     target = np.array([ra1, dec1])
     point = np.array([ra2, dec2])
@@ -50,20 +63,26 @@ def great_circle_distance(ra1, dec1, ra2, dec2):
 
 
 def point_offset(ra_dec, angular_distance, theta):
-    """
-    Give a point that is a given angular distance away from a specified point on the celestial sphere.
+    """Give a point that is a given angular distance away from a specified point on the celestial sphere.
 
-    Parameters:
-    - ra_dec: tuple (RA, DEC) in degrees for the initial point.
-    - angular_distance: distance in degrees to move from the initial point.
-    - theta: direction in degrees counter-clockwise from the positive DEC axis when viewed from the center of the celestial sphere.
+    Parameters
+    ----------
+    ra_dec : tuple
+        (RA, DEC) in degrees for the initial point.
+    angular_distance : float
+        Distance in degrees to move from the initial point.
+    theta : float
+        Direction in degrees counter-clockwise from the positive DEC axis when viewed from the center of the celestial sphere.
 
-    Returns:
-    - new_point: tuple (RA, DEC) in degrees for the point after offset.
+    Returns
+    -------
+    new_point : tuple
+        (RA, DEC) in degrees for the point after offset.
     
-    Note:
-    - The direction specified by theta is counter-clockwise when viewed from the center of the celestial sphere, looking outwards.
-      If visualizing from a point above the North Celestial Pole, the direction will appear clockwise.
+    Note
+    ----
+    The direction specified by theta is counter-clockwise when viewed from the center of the celestial sphere, looking outwards.
+    If visualizing from a point above the North Celestial Pole, the direction will appear clockwise.
     """
 
     # Convert all angles to radians
@@ -84,15 +103,19 @@ def point_offset(ra_dec, angular_distance, theta):
 
 
 def radec_to_cartesian(ra, dec):
-    """
-    Convert Right Ascension and Declination to Cartesian coordinates.
+    """Convert Right Ascension and Declination to Cartesian coordinates.
 
-    Parameters:
-    - ra (float): Right Ascension in degrees.
-    - dec (float): Declination in degrees.
+    Parameters
+    ----------
+    ra : float
+        Right Ascension in degrees.
+    dec : float
+        Declination in degrees.
 
-    Returns:
-    - np.array: Cartesian coordinates [x, y, z].
+    Returns
+    -------
+    np.array
+        Cartesian coordinates [x, y, z].
     """
     ra_rad = np.radians(ra)
     dec_rad = np.radians(dec)
@@ -103,14 +126,17 @@ def radec_to_cartesian(ra, dec):
 
 
 def cartesian_to_radec(cartesian_coords):
-    """
-    Convert Cartesian coordinates to Right Ascension and Declination.
+    """Convert Cartesian coordinates to Right Ascension and Declination.
 
-    Parameters:
-    - cartesian_coords (np.array): Array of Cartesian coordinates [x, y, z] SHOULD BE NORMALIZED.
+    Parameters
+    ----------
+    cartesian_coords : np.array
+        Array of Cartesian coordinates [x, y, z] SHOULD BE NORMALIZED.
 
-    Returns:
-    - tuple: (Right Ascension, Declination) in degrees.
+    Returns
+    -------
+    tuple
+        (RA, DEC) in degrees.
     """
     x, y, z = cartesian_coords.T
     if not np.allclose(np.linalg.norm(cartesian_coords, axis=-1), 1, atol=1e-9):
@@ -121,16 +147,21 @@ def cartesian_to_radec(cartesian_coords):
 
 
 def rodrigues_rotation(v, k, theta):
-    """
-    Rotate a vector using Rodrigues' rotation formula.
+    """Rotate a vector using Rodrigues' rotation formula.
 
-    Parameters:
-    - v (np.array): Vector to be rotated.
-    - k (np.array): Unit vector indicating the axis of rotation.
-    - theta (float): Angle of rotation in degrees.
+    Parameters
+    ----------
+    v : np.array
+        Vector to be rotated.
+    k : np.array
+        Unit vector indicating the axis of rotation.
+    theta : float
+        Angle of rotation in degrees.
 
-    Returns:
-    - np.array: Rotated vector.
+    Returns
+    -------
+    np.array
+        Rotated vector.
     """
     theta_rad = np.radians(theta)
     v_rot = v * np.cos(theta_rad)
@@ -140,15 +171,14 @@ def rodrigues_rotation(v, k, theta):
 
 
 def rotate_radec_about_axis(ra, dec, axis_ra, axis_dec, theta):
-    """
-    Rotate a point (or points) in celestial coordinates about a specified axis.
+    """Rotate a point (or points) in celestial coordinates about a specified axis.
 
     Given a point (or an array of points) defined by its Right Ascension and Declination, 
     this function rotates it about an arbitrary axis (defined by its own RA and Dec) by a 
     specified angle.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     ra : float or np.array
         Right Ascension of the point(s) to be rotated. Can be a single value or an array of values.
     dec : float or np.array
@@ -160,9 +190,9 @@ def rotate_radec_about_axis(ra, dec, axis_ra, axis_dec, theta):
     theta : float
         Angle of rotation in degrees. Expected to be a scalar.
 
-    Returns:
-    --------
-    tuple
+    Returns
+    -------
+    tuple | tuple[numpy.array]
         If `ra` and `dec` are scalars: Returns a tuple (rotated_RA, rotated_Dec) of scalar values.
         If `ra` and `dec` are arrays: Returns a tuple of arrays (rotated_RAs, rotated_Decs).
     """
@@ -189,15 +219,19 @@ def rotate_radec_about_axis(ra, dec, axis_ra, axis_dec, theta):
 
 
 def generate_random_point(n, seed=None):
-    """
-    Generate random points in Right Ascension and Declination uniformly distributed on the celestial sphere.
+    """Generate random points in Right Ascension and Declination uniformly distributed on the celestial sphere.
 
-    Parameters:
-    - n (int): Number of random points to generate.
-    - seed (int, optional): Seed for the random number generator.
+    Parameters
+    ----------
+    n : int
+        Number of random points to generate.
+    seed : int, optional
+        Seed for the random number generator.
 
-    Returns:
-    - tuple: (Right Ascension, Declination) arrays in degrees.
+    Returns
+    -------
+    tuple
+        (RA, DEC) arrays in degrees.
     """
     np.random.seed(seed)
     points = np.random.randn(3, n)

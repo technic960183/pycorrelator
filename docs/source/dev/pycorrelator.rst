@@ -1,16 +1,13 @@
 pycorrelator package
 ====================
 
-Subpackages
+Tests
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    pycorrelator.tests
-
-Submodules
-----------
 
 pycorrelator.catalog module
 ---------------------------

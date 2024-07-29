@@ -9,13 +9,20 @@ class GridChunkConfig:
 
     def __init__(self, center, margin, width: Optional[tuple] = None, dec_bound: Optional[float] = None):
         '''
-        Parameters:
-        - center: tuple of two floats (ra, dec) in degrees
-        - margin: float in degrees
-        - width: tuple of two floats (w_ra, w_dec) in degrees (for ring chunks)
-        - dec_bound: float (for polar chunks)
+        Parameters
+        ----------
 
-        Note:
+        center : tuple
+            Tuple of two floats (ra, dec) in degrees.
+        margin : float
+            Margin in degrees.
+        width : tuple, optional
+            Tuple of two floats (w_ra, w_dec) in degrees (for ring chunks).
+        dec_bound : float, optional
+            Float in degrees (for polar chunks).
+
+        Note
+        ----
             Specify either the width for ring chunks or the dec_bound for polar chunks. 
         '''
         self.margin = margin

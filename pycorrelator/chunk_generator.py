@@ -1,12 +1,12 @@
 from .catalog import Catalog
 from .chunk import Chunk
+from numpy.typing import NDArray
 
 
 class ChunkGenerator:
 
     def __init__(self, margin):
-        '''
-        Purpose: Initialize the chunk generator
+        '''Initialize the chunk generator.
         '''
         self.chunks: list[Chunk] = []
         self.margin = margin
@@ -14,13 +14,18 @@ class ChunkGenerator:
     def get_chunk(self, chunk_id):
         return self.chunks[chunk_id]
 
-    def distribute(self, catalog: Catalog):
-        '''
-        Purpose: Distribute the data into chunks
-        Parameters:
-        - catalog: The catalog to be distributed
-        Returns:
-        - chunks: list of chunks with data
+    def distribute(self, catalog: Catalog) -> list[Chunk]:
+        '''Distribute the data into chunks.
+
+        Parameters
+        ----------
+        catalog : Catalog
+            The catalog to be distributed.
+        
+        Returns
+        -------
+        chunks : list[Chunk]
+            List of chunks with data.
         '''
         coordiantes = catalog.get_coordiantes()
         indexes = catalog.get_indexes()
@@ -40,34 +45,49 @@ class ChunkGenerator:
         return self.chunks
 
     def generate(self):
-        '''
+        '''Generate the chunks.
+
         --- SHOULD BE overridden by subclass ---
-        Purpose: Generate the chunks
         '''
         raise NotImplementedError()
 
-    def coor2id_central(self, ra, dec):
-        '''
+    def coor2id_central(self, ra: NDArray, dec: NDArray):
+        '''Tell which chunk the given coordinate belongs to. (How to divide the sky.)
+
         --- SHOULD BE overridden by subclass ---
-        Purpose: Tell which chunk the given coordinate belongs to (how to divide the sky)
-        Parameters:
-        - ra: numpy array of RA of size n
-        - dec: numpy array of Dec of size n
-        Returns:
-        - chink_id: numpy array of chunk_id of size n
+        
+        Parameters
+        ----------
+        ra : numpy.ndarray
+            The array of RA. Shape: (N,).
+        dec : numpy.ndarray
+            The array of Dec. Shape: (N,).
+        
+        Returns
+        -------
+        chink_id : numpy.ndarray
+            The array of chunk_id. Shape: (N,).
         '''
         raise NotImplementedError()
 
-    def coor2id_boundary(self, ra, dec):
-        '''
+    def coor2id_boundary(self, ra: NDArray, dec: NDArray):
+        '''Tell which boundary of chunk the given coordinate assigned to. (How to divide the sky.)
+
         --- SHOULD BE overridden by subclass ---
-        Purpose: Tell which boundary of chunk the given coordinate assigned to (how to divide the sky)
-                 If the object is located within the 2 * margin with the boundary of a chunk,
-                 it should be contained in the list of object indexes of that chunk. 
-        Parameters:
-        - ra: numpy array of RA
-        - dec: numpy array of Dec
-        Returns:
-        - list_of_chunk_of_list_of_object_index: a list of lists contain the index of the object 
+
+        If the object is located within the 2 * margin with the boundary of a chunk,
+        it should be contained in the list of object indexes of that chunk.
+
+        Parameters
+        ----------
+        ra : numpy.ndarray
+            The array of RA. Shape: (N,).
+        dec : numpy.ndarray
+            The array of Dec. Shape: (N,).
+        
+        Returns
+        -------
+        list_of_chunk_of_list_of_object_index : list
+            A list of lists contain the index of the object.
         '''
         raise NotImplementedError()

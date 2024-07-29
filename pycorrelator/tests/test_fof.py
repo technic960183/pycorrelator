@@ -11,18 +11,28 @@ from pycorrelator import group_by_quadtree
 
 
 def generate_celestial_grid(**kwargs) -> list[tuple[float, float]]:
-    """
-    Generate a grid on the celestial sphere with specified step sizes and bounds.
-    Returns a list of (RA, Dec) tuples for the grid points.
+    """Generate a grid on the celestial sphere with specified step sizes and bounds.
 
-    Parameters can include:
-    - ra_step: step size for Right Ascension (default: 10).
-    - dec_step: step size for Declination (default: 10).
-    - ra_offset: offset for RA (default: 0).
-    - dec_offset: offset for DEC (default: 0).
-    - ra_bounds: a tuple containing the lower and upper bounds for RA (default: (0, 360)).
-    - dec_bounds: a tuple containing the lower and upper bounds for DEC (default: (-60, 60)).
-                  Can also be an absolute value which will be interpreted as (value, -value).
+    Keyword Arguments
+    -----------------
+    ra_step: float
+        Step size for Right Ascension (default: 10).
+    dec_step: float
+        Step size for Declination (default: 10).
+    ra_offset: float
+        Offset for RA (default: 0).
+    dec_offset: float
+        Offset for DEC (default: 0).
+    ra_bounds: tuple
+        A tuple containing the lower and upper bounds for RA (default: (0, 360)).
+    dec_bounds: tuple | float
+        A tuple containing the lower and upper bounds for DEC (default: (-60, 60)).
+        Can also be an absolute value which will be interpreted as (value, -value).
+
+    Returns
+    -------
+    list[tuple[float, float]]
+        List of (RA, Dec) coordinates for the grid points.
     """
 
     ra_step = kwargs.get('ra_step', 10)
@@ -78,14 +88,20 @@ def create_groups_from_grid(grid: list[tuple[float, float]],
 
 
 def check_group_match(expected_groups: list[list[tuple[float, float]]], output_groups):
-    """
-    Check if two groups match.
-    Parameters:
-    - expected_groups: List of groups that are expected to be grouped correctly.
-    - output_groups: List of groups that are output by the tested function.
-    Returns:
-    - problematic_groups: List of groups that the tested function failed to group correctly. If the tested 
-                          function works correctly, an empty list is returned.
+    """Check if two groups match.
+
+    Parameters
+    ----------
+    expected_groups : list[list[tuple[float, float]]]
+        List of groups that are expected to be grouped correctly.
+    output_groups : list[list[tuple[float, float]]]
+        List of groups that are output by the tested function.
+    
+    Returns
+    -------
+    problematic_groups : list[list[tuple[float, float]]]
+        List of groups that the tested function failed to group correctly. If the tested
+        function works correctly, an empty list is returned.
     """
     problematic_groups = []
     for expected_group in expected_groups:

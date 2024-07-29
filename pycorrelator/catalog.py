@@ -5,14 +5,18 @@ from numpy.typing import NDArray
 
 
 class Catalog:
-    '''
-    Purpose: This class is used to store and manipulate the catalog data for xmatch and fof.
-    Parameters:
-        - data (array-like): The input data can be either a numpy array or a pandas dataframe.
-          * np.array: The array must have a shape of (N, 2), representing N points with
-            two values: [ra (azimuth, longitude), dec (alltitude, latitude)].
-          * pd.DataFrame: The dataframe must have two columns named 'Ra' and 'Dec' (or all the
-            possible combinations with 'ra', 'dec'; 'RA', 'DEC').
+    '''This class is used to store and manipulate the catalog data for xmatch and fof.
+
+    Parameters
+    ----------    
+    data : array-like
+        The input data can be either a numpy array or a pandas dataframe.
+
+        * np.array: The array must have a shape of (N, 2), representing N points with
+          two values: [ra (azimuth, longitude), dec (alltitude, latitude)].
+        * pd.DataFrame: The dataframe must have two columns named 'Ra' and 'Dec' (or all the
+          possible combinations with 'ra', 'dec'; 'RA', 'DEC').
+    
     '''
 
     def __init__(self, data):
@@ -37,8 +41,7 @@ class Catalog:
         self._check_validity_range()
         
     def _check_validity_range(self):
-        '''
-        Purpose: Check the validity of the input data. Warning if the data is out of range.
+        '''Check the validity of the input data. Warning if the data is out of range.
         '''
         if np.any(self.ra < 0) or np.any(self.ra > 360):
             print("Warning: Ra values are out of range [0, 360]!")
@@ -52,34 +55,42 @@ class Catalog:
             raise ValueError("The length of Ra and Dec must be the same!")
 
     def get_coordiantes(self) -> NDArray[np.float64]:
-        '''
-        Purpose: Get the coordinate of the points in the catalog for xmatch and fof.
-        Returns:
-            - np.ndarray: The array of shape (N, 2) with [Ra, Dec].
+        '''Get the coordinate of the points in the catalog for xmatch and fof.
+
+        Returns
+        -------
+        numpy.ndarray
+            The array of shape (N, 2) with [Ra, Dec].
         '''
         return np.vstack([self.ra, self.dec], dtype=np.float64).T
     
     def get_indexes(self) -> NDArray[np.int64]:
-        '''
-        Purpose: Get the indexes of the points in the catalog for xmatch and fof.
-        Returns:
-            - np.ndarray: The array of indexes of shape (N,).
+        '''Get the indexes of the points in the catalog for xmatch and fof.
+
+        Returns
+        -------
+        numpy.ndarray
+            The array of indexes of shape (N,).
         '''
         return np.arange(len(self.ra), dtype=np.int64)
     
     def get_appending_data(self, retain_all_columns=True, retain_columns=None,
                            invalid_key_error=True) -> pd.DataFrame:
-        '''
-        Purpose: Get the appending data of the points in the catalog for xmatch and fof.
-        Parameters:
-            - retain_all_columns (bool): Whether to retain all the columns in the input dataframe.
-                No effect when retain_columns is not empty.
-            - retain_columns (list): The list of columns to retain in the input dataframe. Overrides
-                retain_all_columns if not empty.
-            - invalid_key_error (bool): Whether to raise an error when the columns are not in the
-                input dataframe. Default is True.
-        Returns:
-            - pd.DataFrame: The dataframe of the appending data.
+        '''Get the appending data of the points in the catalog for xmatch and fof.
+
+        Parameters
+        ----------
+        retain_all_columns : bool, optional
+            Whether to retain all the columns in the input dataframe. Default is True.
+        retain_columns : list, optional
+            The list of columns to retain in the input dataframe. Overrides retain_all_columns if not empty.
+        invalid_key_error : bool, optional
+            Whether to raise an error when the columns are not in the input dataframe. Default is True.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            The dataframe of the appending data.
         '''
         if self.datatype != pd.DataFrame:
             return pd.DataFrame(index=self.get_indexes())
