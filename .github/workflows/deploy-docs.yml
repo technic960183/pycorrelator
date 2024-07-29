@@ -2,7 +2,7 @@ name: Build and Deploy Sphinx Documentation
 
 on:
   push:
-    branches: ["main", "doc/**"]
+    branches: ["main"] #, "doc/**"]
     paths:
       - '**.py'
       - '**.rst'
@@ -41,7 +41,7 @@ jobs:
         run: sphinx-build -M html docs/source/ docs/build/
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3 # Use upload-pages-artifact instead of upload-artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages-artifact
           path: docs/build/html

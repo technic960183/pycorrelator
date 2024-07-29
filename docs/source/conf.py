@@ -35,6 +35,7 @@ add_module_names = True
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_show_sourcelink = False
 
 # -- Options for napoleon extension ------------------------------------------
 napoleon_google_docstring = True
