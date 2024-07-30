@@ -1,9 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-from scipy.special import expit as sigmoid_function
 from scipy.spatial.distance import euclidean
-from scipy.stats import linregress
 from .utilities_spherical import point_offset
 
 
@@ -24,7 +20,7 @@ The script has two primary functionalities:
    an API for determining relative errors based on specific declination and 
    angular distance inputs.
 
-2. Visualize Errors:
+2. Visualize Errors: (Removed for brevity, see the original script in the backup branch)
    The script generates three main plots to enhance the understanding of these errors:
 
    a. Relative Error in Euclidean Distance vs. Declination (Top-left subplot):
@@ -63,7 +59,7 @@ The script has two primary functionalities:
 
 
 Usage:
-- Execute the script to generate the three plots described above.
+- Execute the script to generate the three plots described above. (Removed for brevity)
 - Import compute_error() to calculate the relative error for a given declination
     and angular distance.
 
@@ -93,17 +89,6 @@ def compute_error(declination, distance):
 
     return max_error
 
-
-def blended_error(theta, a, b, d):
-    '''
-    Note: This function is not used in the script, but it is included here for reference.
-    '''
-    weight = sigmoid_function(a * (theta - b * d))
-    power_law_term = 1.2694230e-05 * d**2
-    cosine_term = (1 - np.cos(np.deg2rad(theta))) / np.cos(np.deg2rad(theta))
-    return weight * power_law_term + (1 - weight) * cosine_term
-
-
 def compute_max_relative_error(dec, distances, theta_values):
     origin = (180, dec)
     offset_points_theta = np.array(point_offset(origin, distances, theta_values))
@@ -113,79 +98,3 @@ def compute_max_relative_error(dec, distances, theta_values):
     max_relative_error = np.max(relative_errors)
     angle_of_max_error = theta_values[np.argmax(relative_errors)]
     return max_relative_error, angle_of_max_error
-
-
-if __name__ == '__main__':
-    declinations = np.geomspace(5e-5, 75, 40)
-    theta_values = np.linspace(0, 90, 50)
-    distances = [0.1, 1, 5]
-
-    fig = plt.figure(figsize=(11, 7))
-    gs = gridspec.GridSpec(2, 2, width_ratios=[1, 0.6], height_ratios=[2, 1])
-    ax1 = fig.add_subplot(gs[0, 0])  # Top-left
-    ax2 = fig.add_subplot(gs[1, 0], sharex=ax1)  # Bottom-left
-    ax3 = fig.add_subplot(gs[:, 1])  # Entire right column
-
-    min_error = []
-    for d in distances:
-        max_errors = []
-        angles_of_max_errors = []
-        for dec in declinations:
-            max_error, angle_of_max_error = compute_max_relative_error(dec, d, theta_values)
-            max_errors.append(max_error)
-            angles_of_max_errors.append(angle_of_max_error)
-        min_error.append(min(max_errors))
-
-        ax1.loglog(declinations, max_errors, marker='o', linestyle='-', label=f'Distance = {d}°')
-        ax2.semilogx(declinations, angles_of_max_errors, marker='o', linestyle='-', label=f'Distance = {d}°')
-
-    min_error = min(min_error)
-    cos_ref = np.cos(np.deg2rad(declinations))
-    cos_ref = (1 - cos_ref) / cos_ref
-    ax1.loglog(
-        declinations[cos_ref > min_error],
-        cos_ref[cos_ref > min_error],
-        'k--', label='Transformed cos(Dec)')
-
-    # Max Relative Error plot configurations
-    ax1.set_xlabel('Declination (degrees)')
-    ax1.set_ylabel('Maximum Relative Euclidean Error')
-    ax1.set_title('Relative Error in Euclidean Distance vs. Declination')
-    ax1.legend()
-    ax1.grid(True, which="both", ls="--")
-
-    # Angle of Max Relative Error plot configurations
-    ax2.set_xlabel('Declination (degrees)')
-    ax2.set_ylabel('Theta (degrees) at Maximum Error')
-    ax2.set_title('Angle Corresponding to Max Relative Error vs. Declination')
-    ax2.grid(True, which="both", ls="--")
-
-    small_dec = 1e-5
-    distances_ax3 = np.geomspace(1e-2, 10, 100)
-    errors_at_small_dec = []
-
-    for d in distances_ax3:
-        max_error, _ = compute_max_relative_error(small_dec, d, theta_values)
-        errors_at_small_dec.append(max_error)
-
-    log_distances = np.log10(distances_ax3)
-    log_errors = np.log10(errors_at_small_dec)
-    slope, intercept, _, _, _ = linregress(log_distances, log_errors)
-    a = 10**intercept  # Result: 1.2694230e-05
-    b = slope         # Result: 1.9999953
-
-    def fitted_power_law(x, a, b):
-        return a * x**b
-
-    predicted_errors = fitted_power_law(distances_ax3, a, b)
-
-    ax3.loglog(distances_ax3, errors_at_small_dec, 'o-', label=f'Relative Error at Dec = {small_dec}')
-    ax3.loglog(distances_ax3, predicted_errors, 'r--', label=f'Fitted Curve: y = {a:.4e} x^{b:.2f}')
-    ax3.set_xlabel('Angular Distance (degrees)')
-    ax3.set_ylabel('Relative Error at Dec close to 0')
-    ax3.set_title('Limiting Behavior of Relative Error')
-    ax3.grid(True, which="both", ls="--")
-    ax3.legend()
-
-    plt.tight_layout()
-    plt.show()
