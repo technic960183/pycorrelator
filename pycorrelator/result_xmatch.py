@@ -1,8 +1,6 @@
-import csv
 from collections import Counter, defaultdict
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from .catalog import Catalog
 
 class XMatchResult:
@@ -159,20 +157,6 @@ class XMatchResult:
         data_df.insert(2, 'N_match', n_match)
         data_df.insert(3, 'is_cat1', is_df1)
         return data_df
-
-    def save_as_skyviewer(self, pathname, radius=5, colors={4: 'red', 3: 'yellow', 2: '#90EE90'}):
-        raise DeprecationWarning("This method is deprecated without a replacement.")
-        key_max = max(list(colors.keys()))
-        coordinate = lambda k: tuple(self.cat1.iloc[int(k)][['Ra', 'Dec']].values)
-        # List of tuples
-        data = [coordinate(k) + (radius, colors[key_max]) for k, v in self.get_result_dict().items() if len(v) >= key_max]
-        colors.pop(key_max)
-        for num, color in colors.items():
-            data += [coordinate(k) + (radius, color) for k, v in self.get_result_dict().items() if len(v) == num]
-        with open(pathname, 'w', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(['RA', 'DEC', 'RADIUS', 'COLOR'])
-            writer.writerows(data)
             
     def number_distribution(self) -> Counter:
         """Get the distribution of the number of matches for each object in the first catalog.
@@ -185,26 +169,4 @@ class XMatchResult:
         Ns = [len(v) for v in self.get_result_dict().values()]
         unique_counts = Counter(Ns)
         return unique_counts
-
-    def draw_number_distribution(self, start=2, end=5, pathname=None):
-        # Purpose: Draws the distribution of the number of matches for each object in the first catalog.
-        # Parameters:
-        #     - start (int): The start of the range of the number of matches (inclusive).
-        #     - end (int): The end of the range of the number of matches (inclusive).
-        #     - pathname (str): The pathname of the output file. If None, the plot will be shown.
-        num = lambda n: len([k for k, v in self.get_result_dict().items() if len(v) == n])
-        x_list = [i for i in range(start, end + 1)]
-        y_list = [num(i) for i in x_list]
-        bars = plt.bar(x_list, y_list)
-        plt.yscale('log')
-        for bar in bars:
-            height = bar.get_height()
-            if height == 0:
-                continue  # Skip bars with a height of 0
-            # Place the text at the height of the bar, accounting for log scale
-            plt.text(bar.get_x() + bar.get_width() / 2.0, height, f'{height}', ha='center', va='bottom')
-        if pathname is not None:
-            plt.savefig(pathname)
-        else:
-            plt.show()
         

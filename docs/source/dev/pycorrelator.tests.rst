@@ -25,14 +25,6 @@ pycorrelator.tests.test\_fof module
    :undoc-members:
    :show-inheritance:
 
-pycorrelator.tests.test\_quadtree module
-----------------------------------------
-
-.. automodule:: pycorrelator.tests.test_quadtree
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pycorrelator.tests.test\_result\_xmatch module
 ----------------------------------------------
 
