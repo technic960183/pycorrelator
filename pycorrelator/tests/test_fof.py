@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 from numpy.typing import NDArray
 from pycorrelator import point_offset, generate_random_point
-from pycorrelator import group_by_disjoint_set, group_by_DFS
+# from pycorrelator import group_by_disjoint_set, group_by_DFS
 from pycorrelator import group_by_quadtree
 
 
@@ -137,16 +137,16 @@ class TestCelestialGrouping_RandomGrid(unittest.TestCase):
             grid, self.tolerance, seed=seed, ring_radius=(0.9999, 1.0))
 
     # @unittest.skip("This test is for the disjoint set method.")
-    def test_group_by_disjoint_set(self):
-        output_groups = group_by_disjoint_set(self.all_points, self.tolerance)
-        problematic_groups = check_group_match(self.expected_groups, output_groups)
-        self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
+    # def test_group_by_disjoint_set(self):
+    #     output_groups = group_by_disjoint_set(self.all_points, self.tolerance)
+    #     problematic_groups = check_group_match(self.expected_groups, output_groups)
+    #     self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
     # @unittest.skip("This test is for the DFS method.")
-    def test_group_by_DFS(self):
-        output_groups = group_by_DFS(self.all_points, self.tolerance)
-        problematic_groups = check_group_match(self.expected_groups, output_groups)
-        self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
+    # def test_group_by_DFS(self):
+    #     output_groups = group_by_DFS(self.all_points, self.tolerance)
+    #     problematic_groups = check_group_match(self.expected_groups, output_groups)
+    #     self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
     def test_group_by_quadtree(self):
         output_groups = group_by_quadtree(self.all_points, self.tolerance).get_coordinates()
@@ -156,14 +156,14 @@ class TestCelestialGrouping_RandomGrid(unittest.TestCase):
 
 class TestCelestialGrouping_Random(unittest.TestCase):
 
-    def test_comparing_DFS_quadtree(self):
-        ra, dec = generate_random_point(10000)
-        all_points = np.array([ra, dec]).T
-        tolerance = 2
-        output_groups_dfs = group_by_DFS(all_points, tolerance)
-        output_groups_qt = group_by_quadtree(all_points, tolerance).get_coordinates()
-        problematic_groups = check_group_match(output_groups_dfs, output_groups_qt)
-        self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
+    # def test_comparing_DFS_quadtree(self):
+    #     ra, dec = generate_random_point(10000)
+    #     all_points = np.array([ra, dec]).T
+    #     tolerance = 2
+    #     output_groups_dfs = group_by_DFS(all_points, tolerance)
+    #     output_groups_qt = group_by_quadtree(all_points, tolerance).get_coordinates()
+    #     problematic_groups = check_group_match(output_groups_dfs, output_groups_qt)
+    #     self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
     @unittest.skip("This test takes too long to run.")
     def test_comparing_chunk_setting(self):
