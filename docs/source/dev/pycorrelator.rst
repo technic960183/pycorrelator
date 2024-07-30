@@ -57,10 +57,10 @@ pycorrelator.euclidean\_vs\_angular\_distance\_local module
    :undoc-members:
    :show-inheritance:
 
-pycorrelator.fof\_scipy module
+pycorrelator.fof module
 ------------------------------
 
-.. automodule:: pycorrelator.fof_scipy
+.. automodule:: pycorrelator.fof
    :members:
    :undoc-members:
    :show-inheritance:

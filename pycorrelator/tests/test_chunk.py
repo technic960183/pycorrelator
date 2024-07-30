@@ -11,7 +11,7 @@ from pycorrelator import GridChunkGenerator
 from pycorrelator import DisjointSet
 from pycorrelator.catalog import Catalog
 from pycorrelator.result_fof import FoFResult 
-from pycorrelator.fof_scipy import group_by_quadtree_chunk
+from pycorrelator.fof import group_by_quadtree_chunk
 
 
 class TestChunkGeneratorByGrid_coor2id_central(unittest.TestCase):
