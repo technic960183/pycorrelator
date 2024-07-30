@@ -3,7 +3,7 @@ Example: Duplicates removal
 
 One common usage of the FoF algorithm is to remove duplicates from a catalog.
 In this example, we will show how to remove duplicates from a catalog using the
-:func:`pycorrelator.group_by_quadtree` function.
+:func:`pycorrelator.fof` function.
 
 First, let's create a mock catalog with duplicates:
 
@@ -28,8 +28,8 @@ Here is how we can do it:
     ranking_col = 'exp_time'
     tolerance = 0.01
 
-    from pycorrelator import group_by_quadtree
-    result_object = group_by_quadtree(catalog, tolerance=tolerance)
+    from pycorrelator import fof
+    result_object = fof(catalog, tolerance=tolerance)
     catalog = result_object.get_group_dataframe()
 
     catalog['dup_num'] = catalog.groupby('Group')['Ra'].transform('size')

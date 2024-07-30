@@ -15,7 +15,7 @@ fof functionality
 ------------------------------
 
 .. _fof-ref:
-.. autofunction:: pycorrelator.group_by_quadtree
+.. autofunction:: pycorrelator.fof
 
 .. autoclass:: pycorrelator.FoFResult
    :members:
