@@ -21,8 +21,8 @@ Quickstart
    - If you want to perform a cross-matching between two catalogs, use the :ref:`xmatch <xmatch-ref>` function.
      See the :doc:`cross-matching example <tutorial/xmatch>` for how to use it.
    - If you want to cluster the objects in a catalog with the Friends-of-Friends (FoF) algorithm, use
-     the :ref:`group_by_quadtree <fof-ref>` function. See the :doc:`clustering example <tutorial/fof>` for how to use it.
-   - If you want to remove duplicates from a catalog, also using the :ref:`group_by_quadtree <fof-ref>` function.
+     the :ref:`fof <fof-ref>` function. See the :doc:`clustering example <tutorial/fof>` for how to use it.
+   - If you want to remove duplicates from a catalog, also using the :ref:`fof <fof-ref>` function.
      See the :doc:`duplicates removal example <tutorial/duplicates_removal>` for how to do it.
 
 

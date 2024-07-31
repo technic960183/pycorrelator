@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 from scipy.spatial import KDTree
 from .catalog import Catalog
@@ -9,8 +10,15 @@ from .result_fof import FoFResult
 from .utilities_spherical import radec_to_cartesian, cartesian_to_radec
 from .utilities_spherical import great_circle_distance, rotate_radec_about_axis
 
+def group_by_quadtree(catalog, tolerance, dec_bound=None, ring_chunk=None) -> FoFResult:
+    warnings.warn("This function will be deprecated. Use fof() instead.", FutureWarning)
+    if dec_bound is not None:
+        raise ValueError("The dec_bound parameter is no longer supported.")
+    if ring_chunk is not None:
+        raise ValueError("The ring_chunk parameter is no longer supported.")
+    return fof(catalog, tolerance)
 
-def group_by_quadtree(catalog, tolerance, dec_bound=60, ring_chunk=[6, 6]) -> FoFResult:
+def fof(catalog, tolerance) -> FoFResult:
     """Perform the Friends-of-Friends (FoF) grouping algorithm on a catalog.
 
     This function applies the FoF algorithm to a given catalog. The algorithm works by linking objects
@@ -29,11 +37,16 @@ def group_by_quadtree(catalog, tolerance, dec_bound=60, ring_chunk=[6, 6]) -> Fo
     FoFResult
         The result of the Friends-of-Friends grouping.
     """
+    DEC_BOUND = 60
+    RING_CHUNK = [6, 6]
+    dec_bound, ring_chunk = DEC_BOUND, RING_CHUNK
+
     _catalog = Catalog(catalog)
     cg = GridChunkGenerator(margin=2*tolerance)
     cg.set_symmetric_ring_chunk(dec_bound, ring_chunk)
     cg.distribute(_catalog)
-    print(f"[Scipy Version] Using single process to group {len(cg.chunks)} chunks.")
+    
+    print(f"Using a single process to group {len(cg.chunks)} chunks.")
     ds = DisjointSet(len(_catalog))
     for chunk in cg.chunks:
         groups_index = group_by_quadtree_chunk((chunk, tolerance))

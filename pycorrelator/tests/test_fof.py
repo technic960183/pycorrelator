@@ -7,7 +7,7 @@ import numpy as np
 from numpy.typing import NDArray
 from pycorrelator import point_offset, generate_random_point
 # from pycorrelator import group_by_disjoint_set, group_by_DFS
-from pycorrelator import group_by_quadtree
+from pycorrelator import fof
 
 
 def generate_celestial_grid(**kwargs) -> list[tuple[float, float]]:
@@ -149,7 +149,7 @@ class TestCelestialGrouping_RandomGrid(unittest.TestCase):
     #     self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
     def test_group_by_quadtree(self):
-        output_groups = group_by_quadtree(self.all_points, self.tolerance).get_coordinates()
+        output_groups = fof(self.all_points, self.tolerance).get_coordinates()
         problematic_groups = check_group_match(self.expected_groups, output_groups)
         self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
@@ -170,13 +170,13 @@ class TestCelestialGrouping_Random(unittest.TestCase):
         ra, dec = generate_random_point(10000, seed=0)
         all_points = np.array([ra, dec]).T
         tolerance = 1.5
-        output_groups_base = group_by_quadtree(all_points, tolerance, dec_bound=60, ring_chunk=[6, 6]).get_coordinates()
+        output_groups_base = fof(all_points, tolerance, dec_bound=60, ring_chunk=[6, 6]).get_coordinates()
         for i in range(400):
             print(f"Test {i+1} started!")
             dec = np.random.uniform(50, 80)
             N = np.random.randint(2, 6)
             ring = [np.random.randint(6, 12) for _ in range(N)]
-            output_groups_test = group_by_quadtree(all_points, tolerance, dec_bound=dec, ring_chunk=ring).get_coordinates()
+            output_groups_test = fof(all_points, tolerance, dec_bound=dec, ring_chunk=ring).get_coordinates()
             problematic_groups = check_group_match(output_groups_test, output_groups_base)
             self.assertEqual(
                 len(problematic_groups),
@@ -189,7 +189,7 @@ class TestCelestialGrouping(unittest.TestCase):
         grid = generate_celestial_grid(ra_step=1, dec_step=1, dec_bounds=70)
         tolerance = 0.1
         expected_groups, all_points = create_groups_from_grid(grid, tolerance, fraction=0.1, ring_radius=(0.9999, 1.0))
-        output_groups = group_by_quadtree(all_points, tolerance).get_coordinates()
+        output_groups = fof(all_points, tolerance).get_coordinates()
         problematic_groups = check_group_match(expected_groups, output_groups)
         self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
@@ -197,7 +197,7 @@ class TestCelestialGrouping(unittest.TestCase):
         grid = generate_celestial_grid(ra_step=60, dec_step=5, dec_bounds=60)
         tolerance = 0.2
         expected_groups, all_points = create_groups_from_grid(grid, tolerance, fraction=1)
-        output_groups = group_by_quadtree(all_points, tolerance).get_coordinates()
+        output_groups = fof(all_points, tolerance).get_coordinates()
         problematic_groups = check_group_match(expected_groups, output_groups)
         self.assertEqual(len(problematic_groups), 0, f"Failed groups: {problematic_groups}")
 
@@ -211,7 +211,7 @@ class TestCelestialGrouping(unittest.TestCase):
         grid = generate_celestial_grid(ra_step=2, dec_step=5, dec_bounds=dec_range, ra_offset=0)
         tolerance = 2
         all_points = np.array(grid)
-        output_groups = group_by_quadtree(all_points, tolerance).get_coordinates()
+        output_groups = fof(all_points, tolerance).get_coordinates()
         self.assertEqual(len(output_groups), (dec_range//5)*2+1, f"Number of groups obtained: {len(output_groups)}")
 
     def test_qt_random_walk(self):
@@ -224,7 +224,7 @@ class TestCelestialGrouping(unittest.TestCase):
             all_points.append(point_now)
         all_points = np.array(all_points)
         tolerance = 1
-        output_groups = group_by_quadtree(all_points, tolerance).get_coordinates()
+        output_groups = fof(all_points, tolerance).get_coordinates()
         self.assertEqual(len(output_groups), 1, f"Number of groups obtained: {len(output_groups)}")
 
     def test_qt_random_tree(self):
@@ -238,7 +238,7 @@ class TestCelestialGrouping(unittest.TestCase):
             all_points.append(point_now)
         all_points = np.array(all_points)
         tolerance = 1
-        output_groups = group_by_quadtree(all_points, tolerance).get_coordinates()
+        output_groups = fof(all_points, tolerance).get_coordinates()
         self.assertEqual(len(output_groups), 1, f"Number of groups obtained: {len(output_groups)}")
 
 

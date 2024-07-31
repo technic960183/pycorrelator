@@ -20,16 +20,16 @@ First, let's create a mock catalog:
     If you want to use a format other than a pandas DataFrame,
     see the :doc:`supported formats <input_validation>` for more information.
 
-group_by_quadtree()
+fof()
 -------------------
 
 Then, we can perform clustering using the FoF algorithm with the tolerance of 0.01 degree using the
-:func:`pycorrelator.group_by_quadtree` function.
+:func:`pycorrelator.fof` function.
 
 .. code-block:: python
 
-    from pycorrelator import group_by_quadtree
-    result_object = group_by_quadtree(catalog, tolerance=0.01)
+    from pycorrelator import fof
+    result_object = fof(catalog, tolerance=0.01)
 
 The result object contains the clustering results. Four methods are available to get the results in different formats:
 
